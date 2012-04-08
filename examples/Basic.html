@@ -6,10 +6,59 @@
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		<script type="text/javascript" src="PortalClient.js"></script>
 		<script type="text/javascript">
-			var client = new PortalClient();
+			var client = null;
+			
+			$(document).ready(function(event)
+			{
+				$(".EnterServicePath").submit(function(event)
+				{
+					event.preventDefault();
+					
+					client = new PortalClient($(this).find("input[name=ServicePath]").val());
+					
+					client.SessionCreate(function(success, data)
+					{
+						$(".Login").show();
+					});
+					
+					$(this).hide();
+				});
+
+				$(".Login").submit(function(event)
+				{
+					event.preventDefault();
+					
+					client.EmailPasswordLogin($(this).find("input[name=Email]").val(), $(this).find("input[name=Password]").val(), function(success, data)
+					{
+						$(".Results").show();
+					});
+
+					$(this).hide();
+				});
+			});
 		</script>
 	</head>
 	<body>
 		<h1>JavaScript CHAOS Portal Client Basic Example</h1>
+		<form class="EnterServicePath" action="">
+			<label>Service Path: <input name="ServicePath" type="text"></label>
+			<input type="submit">
+		</form>
+		<form class="Login" action="" style="display: none;">
+			<label>Email: <input name="Email" type="text"></label>
+			<label>Password: <input name="Password" type="password"></label>
+			<input type="submit">
+		</form>
+		<div class="Results" style="display: none">
+			<div>
+				SessionID: <span class="SessionID"></span>
+			</div>
+			<div>
+				UserID: <span class="UserID"></span>
+			</div>
+			<div>
+				Objects: <span class="Objects"></span>
+			</div>
+		</div>
 	</body>
 </html>
