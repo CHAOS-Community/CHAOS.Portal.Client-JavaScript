@@ -15,7 +15,7 @@ If you encounter any problems using this project, please report them using the "
 
 ##Links
 This project is hosted on Github here: [https://github.com/CHAOS-Community/CHAOS.Portal.Client-JavaScript](https://github.com/CHAOS-Community/CHAOS.Portal.Client-JavaScript)  
-See also [https://github.com/CHAOS-Community/Portal](https://github.com/CHAOS-Community/Portal) for more information on Portal.
+See also [https://github.com/CHAOS-Community/Portal](https://github.com/CHAOS-Community/Portal) for more information on Portal.  
 [PHP Client](https://github.com/CHAOS-Community/CHAOS.Portal.Client-PHP)
 
 ##License  
