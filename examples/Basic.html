@@ -16,9 +16,10 @@
 					
 					client = new PortalClient($(this).find("input[name=ServicePath]").val());
 					
-					client.SessionCreate(function(success, data)
+					client.Session_Create(function(data)
 					{
 						$(".Login").show();
+						$(".SessionID").text(data.Portal().Results()[0].SessionGUID);
 					});
 					
 					$(this).hide();
@@ -28,14 +29,43 @@
 				{
 					event.preventDefault();
 					
-					client.EmailPasswordLogin($(this).find("input[name=Email]").val(), $(this).find("input[name=Password]").val(), function(success, data)
+					client.EmailPassword_Login(function(data)
 					{
 						$(".Results").show();
-					});
+						$(".UserID").text(data.EmailPassword().Results()[0].GUID);
+						GetFolders();
+					}, $(this).find("input[name=Email]").val(), $(this).find("input[name=Password]").val());
 
 					$(this).hide();
 				});
 			});
+			
+			function GetFolders()
+			{
+				client.Folder_Get(function(serviceResult)
+				{	
+					var results = serviceResult.MCM().Results();
+					for(var i = 0; i < results.length; i++)
+					{
+						$(".Folders").append("<br />" + results[i].Name);
+						
+						if(i == 0)
+							GetObjects(results[i].ID);
+					}
+				}, null, null, null);
+			}
+			
+			function GetObjects(folderID)
+			{
+				client.Object_Get_ByFolderID(function(serviceResult)
+				{
+					var results = serviceResult.MCM().Results();
+					for(var i = 0; i < results.length; i++)
+					{
+						$(".Objects").append("<br />" + results[i].GUID);
+					}
+				}, folderID, true, 0, 3, true, false, false);
+			}
 		</script>
 	</head>
 	<body>
@@ -55,6 +85,9 @@
 			</div>
 			<div>
 				UserID: <span class="UserID"></span>
+			</div>
+			<div>
+				Folders: <span class="Folders"></span>
 			</div>
 			<div>
 				Objects: <span class="Objects"></span>
