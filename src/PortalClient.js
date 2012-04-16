@@ -118,8 +118,15 @@ PortalClient.prototype = (function()
 		Object_Get:				function(callback, query, sort, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations)
 		{ return CallService.call(this, callback, "Object/Get", HTTP_METHOD_GET, {query: query, sort: sort, pageIndex: pageIndex, pageSize: pageSize, includeMetadata: includeMetadata, includeFiles: includeFiles, includeObjectRelations: includeObjectRelations}, true); },
 		
-		Object_Get_ByFolderID:	function(callback, folderID, includeChildFolders, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations)
-		{ return this.Object_Get(callback, (includeChildFolders ? "(FolderTree:" : "(FolderID:") + folderID + ")", null, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations); }
+		Object_GetByFolderID:	function(callback, folderID, includeChildFolders, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations)
+		{ return this.Object_Get(callback, (includeChildFolders ? "(FolderTree:" : "(FolderID:") + folderID + ")", null, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations); },
+		
+		Object_GetByObjectGUID:	function(callback, objectGUID, includeMetadata, includeFiles, includeObjectRelations)
+		{ return this.Object_Get(callback, "(GUID:" + objectGUID + ")", null, 0, 1, includeMetadata, includeFiles, includeObjectRelations); },
+		
+		StatsObject_Set:		function(repositoryIdentifier, objectIdentifier, objectTypeID, objectCollectionID, channelIdentifier, channelTypeID, eventTypeID, objectTitle, ip, city, country, userSessionID)
+		{ return CallService.call(this, callback, "StatsObject/Set", HTTP_METHOD_GET, {repositoryIdentifier: repositoryIdentifier, objectIdentifier: objectIdentifier, objectTypeID: objectTypeID, objectCollectionID: objectCollectionID,
+			channelIdentifier: channelIdentifier, channelTypeID: channelTypeID, eventTypeID: eventTypeID, objectTitle: objectTitle, ip: ip, city: city, country: country, userSessionID: userSessionID}, true); }
 	};
 })();
 
