@@ -17,7 +17,8 @@ If you encounter any problems using this project, please report them using the "
 [Official CHAOS Community website](http://www.chaos-community.org/)  
 [This project on GitHub](https://github.com/CHAOS-Community/CHAOS.Portal.Client-JavaScript)  
 [Portal project on GitHub](https://github.com/CHAOS-Community/Portal)  
-[PHP client on GitHub](https://github.com/CHAOS-Community/CHAOS.Portal.Client-PHP)
+[PHP client on GitHub](https://github.com/CHAOS-Community/CHAOS.Portal.Client-PHP)  
+[.NET client on GitHub](https://github.com/CHAOS-Community/CHAOS.Portal.Client-.NET)
 
 ##License  
 This program is free software: you can redistribute it and/or modify  
