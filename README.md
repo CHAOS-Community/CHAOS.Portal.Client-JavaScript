@@ -2,7 +2,7 @@
 This is a JavaScript Portal API Client. It enables easy communication with a CHAOS Portal API (protocol version 4).
 
 ##Requirements
-[jQuery 1.7+](http://jquery.com/)
+[jQuery 1.7+](http://jquery.com/) is used to make AJAX calls, but this dependency will be removed in the near future.
 
 ##Code
 The source code is located in the *src* folder.  
