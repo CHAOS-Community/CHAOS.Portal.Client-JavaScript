@@ -17,7 +17,7 @@ If you encounter any problems using this project, please report them using the "
 ##Links
 [Official CHAOS Community website](http://www.chaos-community.org/)  
 [This project on GitHub](https://github.com/CHAOS-Community/CHAOS.Portal.Client-JavaScript)  
-[Plugins for this project on GitHub](https://github.com/CHAOS-Community/CHAOS.Portal.Client.Plugins-JavaScript)
+[Plugins for this project on GitHub](https://github.com/CHAOS-Community/CHAOS.Portal.Client.Plugins-JavaScript)  
 [Portal project on GitHub](https://github.com/CHAOS-Community/Portal)  
 [PHP client on GitHub](https://github.com/CHAOS-Community/CHAOS.Portal.Client-PHP)  
 [.NET client on GitHub](https://github.com/CHAOS-Community/CHAOS.Portal.Client-.NET)
