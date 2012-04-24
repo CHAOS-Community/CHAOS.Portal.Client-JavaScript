@@ -3,8 +3,14 @@
 
 // ******************************** PortalClient ********************************
 
-function PortalClient(servicePath)
+function PortalClient(servicePath, clientGUID, autoCreateSession)
 {
+	if(typeof servicePath === "undefined")
+		throw "Parameter servicePath must be set";
+	
+	clientGUID = typeof clientGUID !== "undefined" ? clientGUID : null;
+	autoCreateSession = typeof autoCreateSession !== "undefined" ? autoCreateSession : true;
+	
 	var _sessionCreated = new PortalEvent(this);
 	var _sessionAuthenticated = new PortalEvent(this);
 	
@@ -15,8 +21,12 @@ function PortalClient(servicePath)
 		servicePath += "/";
 	
 	this.ServicePath = function() { return servicePath; };
+	this.ClientGUID = function() { return clientGUID; };
 	this.SessionCreated = function() { return _sessionCreated; };
 	this.SessionAuthenticated = function() { return _sessionAuthenticated; };
+	
+	if(autoCreateSession)
+		this.Session_Create();
 }
 
 PortalClient.prototype = (function()
@@ -41,6 +51,8 @@ PortalClient.prototype = (function()
 					delete parameters[key];
 			}
 		}
+
+		ValidateCallback(callback);
 		
 		if(requiresSession)
 		{
@@ -59,15 +71,21 @@ PortalClient.prototype = (function()
 			data: parameters,
 			success: function (data, textStatus, jqXHR)
 			{
-				if(callback != null)
+				if(typeof callback === "function")
 					callback(new PortalServiceResult(data));
 			},
 			dataType: "jsonp"
 		}).error(function (request, error, message) 
 		{
-			if(callback != null)
+			if(typeof callback === "function")
 				callback(new PortalServiceResult(message));
 		});
+	}
+	
+	function ValidateCallback(callback)
+	{
+		if(typeof callback !== "function" && typeof callback !== "undefined" && callback !== null)
+			throw "Parameter callback must a function, null or undefined";
 	}
 	
 	return {
@@ -75,22 +93,25 @@ PortalClient.prototype = (function()
 
 		ProtocolVersion:	function() { return PROTOCOL_VERSION; },
 		SessionGUID: 		function() { return this._SessionGUID; },
+		IsSessionCreated:	function() { return this._SessionGUID != null; },
 		IsAuthenticated: 	function() { return this._IsAuthenticated; },
 		
 		Session_Create:			function(callback) 
 		{ 
 			var self = this;
+
+			ValidateCallback.call(this, callback);
 			
 			return CallService.call(this, function(serviceResult)
 			{
-				if(serviceResult.WasSuccess())
+				if(serviceResult.WasSuccess() && serviceResult.Portal() != null && serviceResult.Portal().WasSuccess())
 				{
 					var session = serviceResult.Portal().Results()[0];
 					self._SessionGUID = session.SessionGUID;
 					self.SessionCreated().Raise(session);
 				}
 
-				if(callback != null)
+				if(typeof callback === "function")
 					callback(serviceResult);
 			}, "Session/Create", HTTP_METHOD_GET, {protocolVersion: this.ProtocolVersion()}, false);
 		},
@@ -98,16 +119,18 @@ PortalClient.prototype = (function()
 		EmailPassword_Login:	function(callback, email, password)
 		{
 			var self = this;
+
+			ValidateCallback.call(this, callback);
 			
 			return CallService.call(this, function(serviceResult)
 			{
-				if(serviceResult.WasSuccess())
+				if(serviceResult.WasSuccess() && serviceResult.EmailPassword() != null && serviceResult.EmailPassword().WasSuccess())
 				{
 					self._IsAuthenticated = true;
 					self.SessionAuthenticated().Raise(serviceResult.EmailPassword().Results()[0]);
 				}
 
-				if(callback != null)
+				if(typeof callback === "function")
 					callback(serviceResult);
 			}, "EmailPassword/Login", HTTP_METHOD_GET, {email: email, password: password}, true); 
 		},
@@ -116,7 +139,12 @@ PortalClient.prototype = (function()
 		{ return CallService.call(this, callback, "Folder/Get", HTTP_METHOD_GET, {id: id, folderTypeID: folderTypeID, parentID: parentID}, true); },
 
 		Object_Get:				function(callback, query, sort, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations)
-		{ return CallService.call(this, callback, "Object/Get", HTTP_METHOD_GET, {query: query, sort: sort, pageIndex: pageIndex, pageSize: pageSize, includeMetadata: includeMetadata, includeFiles: includeFiles, includeObjectRelations: includeObjectRelations}, true); },
+		{
+			includeMetadata = typeof includeMetadata !== 'undefined' ? includeMetadata : false;
+			includeFiles = typeof includeFiles !== 'undefined' ? includeFiles : false;
+			includeObjectRelations = typeof includeObjectRelations !== 'undefined' ? includeObjectRelations : false;
+			return CallService.call(this, callback, "Object/Get", HTTP_METHOD_GET, {query: query, sort: sort, pageIndex: pageIndex, pageSize: pageSize, includeMetadata: includeMetadata, includeFiles: includeFiles, includeObjectRelations: includeObjectRelations}, true);
+		},
 		
 		Object_GetByFolderID:	function(callback, folderID, includeChildFolders, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations)
 		{ return this.Object_Get(callback, (includeChildFolders ? "(FolderTree:" : "(FolderID:") + folderID + ")", null, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations); },
