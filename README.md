@@ -8,7 +8,8 @@ This is a JavaScript Portal API Client. It enables easy communication with a CHA
 The source code is located in the *src* folder.  
 
 ##Examples
-The examples are located in the *examples* folder.
+The examples are located in the *examples* folder.  
+Make sure to update the referenced script file paths if the examples are moved.
 
 ##Reporting problems
 If you encounter any problems using this project, please report them using the "Issues" section of the projects Github page.
@@ -16,6 +17,7 @@ If you encounter any problems using this project, please report them using the "
 ##Links
 [Official CHAOS Community website](http://www.chaos-community.org/)  
 [This project on GitHub](https://github.com/CHAOS-Community/CHAOS.Portal.Client-JavaScript)  
+[Plugins for this project on GitHub](https://github.com/CHAOS-Community/CHAOS.Portal.Client.Plugins-JavaScript)
 [Portal project on GitHub](https://github.com/CHAOS-Community/Portal)  
 [PHP client on GitHub](https://github.com/CHAOS-Community/CHAOS.Portal.Client-PHP)  
 [.NET client on GitHub](https://github.com/CHAOS-Community/CHAOS.Portal.Client-.NET)
