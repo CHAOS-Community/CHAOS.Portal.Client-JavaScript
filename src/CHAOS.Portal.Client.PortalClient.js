@@ -47,7 +47,7 @@ PortalClient.prototype = (function()
 		{
 			for(key in parameters)
 			{
-				if(parameters[key] == null)
+				if(parameters[key] == null || typeof parameters[key] === 'undefined')
 					delete parameters[key];
 			}
 		}
@@ -138,6 +138,12 @@ PortalClient.prototype = (function()
 		Folder_Get:				function(callback, id, folderTypeID, parentID)
 		{ return CallService.call(this, callback, "Folder/Get", HTTP_METHOD_GET, {id: id, folderTypeID: folderTypeID, parentID: parentID}, true); },
 
+		MetadataSchema_Get:		function(metadataSchemaGUID)
+		{ return CallService.call(this, callback, "MetadataSchema/Get", HTTP_METHOD_GET, {metadataSchemaGUID: metadataSchemaGUID}); },
+
+		Object_Create:		function(callback, guid, objectTypeID, folderID )
+		{ return CallService.call(this, callback, "Object/Create", HTTP_METHOD_GET, {guid: guid, objectTypeID: objectTypeID, folderID: folderID}); },
+
 		Object_Get:				function(callback, query, sort, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations)
 		{
 			includeMetadata = typeof includeMetadata !== 'undefined' ? includeMetadata : false;
@@ -152,9 +158,21 @@ PortalClient.prototype = (function()
 		Object_GetByObjectGUID:	function(callback, objectGUID, includeMetadata, includeFiles, includeObjectRelations)
 		{ return this.Object_Get(callback, "(GUID:" + objectGUID + ")", null, 0, 1, includeMetadata, includeFiles, includeObjectRelations); },
 		
+		Metadata_Set: function(objectGUID, metadataSchemaGUID, languageCode, revisionID, metadataXML )
+		{  CallService.call(this, callback, "Metadata/Set", HTTP_METHOD_GET, {objectGUID: objectGUID, metadataSchemaGUID: metadataSchemaGUID, languageCode: languageCode, revisionID: revisionID, metadataXML: metadataXML}); },
+
 		StatsObject_Set:		function(repositoryIdentifier, objectIdentifier, objectTypeID, objectCollectionID, channelIdentifier, channelTypeID, eventTypeID, objectTitle, ip, city, country, userSessionID)
 		{ return CallService.call(this, callback, "StatsObject/Set", HTTP_METHOD_GET, {repositoryIdentifier: repositoryIdentifier, objectIdentifier: objectIdentifier, objectTypeID: objectTypeID, objectCollectionID: objectCollectionID,
-			channelIdentifier: channelIdentifier, channelTypeID: channelTypeID, eventTypeID: eventTypeID, objectTitle: objectTitle, ip: ip, city: city, country: country, userSessionID: userSessionID}, true); }
+			channelIdentifier: channelIdentifier, channelTypeID: channelTypeID, eventTypeID: eventTypeID, objectTitle: objectTitle, ip: ip, city: city, country: country, userSessionID: userSessionID}, true); },
+
+		SecureCookie_Create:	function(callback)
+		{ return CallService.call(this, callback, "SecureCookie/Create", HTTP_METHOD_GET); },
+
+		SecureCookie_Delete:	function(callback, guids)
+		{ throw "Method not implemented"; },
+
+		SecureCookie_Login:		function(callback, guid, passwordGUID )
+		{ return CallService.call(this, callback, "SecureCookie/Login", HTTP_METHOD_GET, {guid: guid, passwordGUID: passwordGUID}); }
 	};
 })();
 
