@@ -245,12 +245,16 @@ function PortalServiceResult(data)
 			switch(data.ModuleResults[i].Fullname)
 			{
 				case "Geckon.Portal":
+				case "CHAOS.Portal.Modules.SessionModule":
 					_portal = new PortalModuleResult(data.ModuleResults[i]);
 					break;
 				case "CHAOS.Portal.EmailPasswordModule.Standard.EmailPasswordModule":
+				case "CHAOS.Portal.Authentication.EmailPassword.Module.EmailPasswordModule":
 					_emailPassword = new PortalModuleResult(data.ModuleResults[i]);
 					break;
 				case "CHAOS.MCM.Module.Standard.MCMModule":
+				case "CHAOS.MCM.Module.MCMModule":
+				case "CHAOS.MCM.Module.ObjectModule":
 					_mcm = new PortalModuleResult(data.ModuleResults[i]);
 					break;
 				case "CHAOS.Statistics.Module.Standard.StatisticsModule":
