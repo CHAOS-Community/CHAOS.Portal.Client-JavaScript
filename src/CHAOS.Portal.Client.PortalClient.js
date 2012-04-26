@@ -96,6 +96,7 @@ PortalClient.prototype = (function()
 		IsSessionCreated:	function() { return this._SessionGUID != null; },
 		IsAuthenticated: 	function() { return this._IsAuthenticated; },
 		
+		
 		Session_Create:			function(callback) 
 		{ 
 			var self = this;
@@ -226,6 +227,7 @@ function PortalServiceResult(data)
 	var _error = null;
 	var _portal = null;
 	var _emailPassword = null;
+	var _secureCookie = null;
 	var _mcm = null;
 	var _statistics = null;
 	
@@ -244,20 +246,19 @@ function PortalServiceResult(data)
 		{
 			switch(data.ModuleResults[i].Fullname)
 			{
-				case "Geckon.Portal":
-				case "CHAOS.Portal.Modules.SessionModule":
+				case "Portal":
 					_portal = new PortalModuleResult(data.ModuleResults[i]);
 					break;
-				case "CHAOS.Portal.EmailPasswordModule.Standard.EmailPasswordModule":
-				case "CHAOS.Portal.Authentication.EmailPassword.Module.EmailPasswordModule":
+				case "EmailPassword":
 					_emailPassword = new PortalModuleResult(data.ModuleResults[i]);
 					break;
-				case "CHAOS.MCM.Module.Standard.MCMModule":
-				case "CHAOS.MCM.Module.MCMModule":
-				case "CHAOS.MCM.Module.ObjectModule":
+				case "SecureCookie":
+					_secureCookie = new PortalModuleResult($moduleResult);
+					break;
+				case "MCM":
 					_mcm = new PortalModuleResult(data.ModuleResults[i]);
 					break;
-				case "CHAOS.Statistics.Module.Standard.StatisticsModule":
+				case "Statistics":
 					_statistics = new PortalModuleResult(data.ModuleResults[i]);
 					break;
 			}
@@ -268,6 +269,7 @@ function PortalServiceResult(data)
 	this.WasSuccess = function() { return this.Error() == null; };
 	this.Portal = function() { return _portal; };
 	this.EmailPassword = function() { return _emailPassword; };
+	this.SecureCookie = function() { return _secureCookie; };
 	this.MCM = function() { return _mcm; };
 	this.Statistics = function() { return _statistics; };
 }
