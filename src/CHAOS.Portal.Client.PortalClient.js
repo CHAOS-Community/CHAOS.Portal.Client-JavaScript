@@ -27,7 +27,25 @@ function PortalClient(servicePath, clientGUID, autoCreateSession)
 	
 	if(autoCreateSession)
 		this.Session_Create();
+	
+	var pluginInitializers = PortalClient.GetPluginInitializerFunctions();
+	for(var i = 0; i < pluginInitializers.length; i++)
+	{
+		var initializeResult = pluginInitializers[i].call(this);
+		
+		for(key in initializeResult)
+		{
+			if(typeof this[key] !== "undefined")
+				throw "Plugin tried overwrite existing propery: " + key;
+			
+			this[key] = initializeResult[key];
+		}
+	}
 }
+
+PortalClient._pluginInitializerFunctions = new Array();
+PortalClient.GetPluginInitializerFunctions = function() { return this._pluginInitializerFunctions; };
+PortalClient.RegisterPlugin = function(initializerFunction) { this._pluginInitializerFunctions.push(initializerFunction); };
 
 PortalClient.prototype = (function()
 {
@@ -95,7 +113,6 @@ PortalClient.prototype = (function()
 		SessionGUID: 		function() { return this._SessionGUID; },
 		IsSessionCreated:	function() { return this._SessionGUID != null; },
 		IsAuthenticated: 	function() { return this._IsAuthenticated; },
-		
 		
 		Session_Create:			function(callback) 
 		{ 

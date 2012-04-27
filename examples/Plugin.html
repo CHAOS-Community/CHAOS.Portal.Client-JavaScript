@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+		"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>JavaScript CHAOS Portal Client Plugin Example</title>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script type="text/javascript" src="../src/CHAOS.Portal.Client.PortalClient.js"></script>
+		<script type="text/javascript">
+			PortalClient.RegisterPlugin(function()
+			{
+				this.SessionCreated().Add(function(sender, data) { $(".LogOutput").append("Session Created: " + data.SessionGUID + "<br />"); }); //This refers to a newly created PortalClient instance.
+				
+				return { // All properties of the returned object are added to each PortalClient instance.
+					PrettySession: function()
+					{
+						if(this.IsSessionCreated())
+							return "This PortalClient instances uses the session with GUID: " + this.SessionGUID();
+						else
+							return "This PortalClient instance have no session";
+					}
+				}
+			});
+
+			var client = null;
+
+			$(document).ready(function(event)
+			{
+				$(".EnterServicePath").submit(function(event)
+				{
+					event.preventDefault();
+
+					client = new PortalClient($(this).find("input[name=ServicePath]").val());
+
+					$(".LogOutput").append("PortalClient.PrettySession(): " + client.PrettySession() + "<br />");
+					
+					setTimeout(function(){ $(".LogOutput").append("PortalClient.PrettySession() delayed: " + client.PrettySession() + "<br />"); }, 2000);
+
+					$(this).hide();
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<h1>JavaScript CHAOS Portal Client Plugin Example</h1>
+		<form class="EnterServicePath" action="">
+			<label>Service Path: <input name="ServicePath" type="text"></label>
+			<input type="submit">
+		</form>
+		<div class="LogOutput">
+			
+		</div>
+	</body>
+</html>
