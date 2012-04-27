@@ -15,7 +15,7 @@ function PortalClient(servicePath, clientGUID, autoCreateSession)
 	var _sessionAuthenticated = new PortalEvent(this);
 	
 	this._SessionGUID = null;
-	this._IsAuthenticated = false;
+	this._IsSessionAuthenticated = false;
 	
 	if(servicePath.substr(-1) != "/")
 		servicePath += "/";
@@ -36,7 +36,7 @@ function PortalClient(servicePath, clientGUID, autoCreateSession)
 		for(key in initializeResult)
 		{
 			if(typeof this[key] !== "undefined")
-				throw "Plugin tried overwrite existing propery: " + key;
+				throw "Plugin tried overwrite existing property: " + key;
 			
 			this[key] = initializeResult[key];
 		}
@@ -54,6 +54,8 @@ PortalClient.prototype = (function()
 	var USER_HTTP_STATUS_CODES = false;
 	var HTTP_METHOD_POST = "POST";
 	var HTTP_METHOD_GET = "GET";
+	var AUTHENTICATION_METHOD_EMAIL_PASSWORD = "EmailPassword";
+	var AUTHENTICATION_METHOD_SECURE_COOKIE = "SecureCookie";
 	
 	function CallService(callback, path, httpMethod, parameters, requiresSession)
 	{
@@ -109,10 +111,12 @@ PortalClient.prototype = (function()
 	return {
 		constructor: PortalClient,
 
-		ProtocolVersion:	function() { return PROTOCOL_VERSION; },
-		SessionGUID: 		function() { return this._SessionGUID; },
-		IsSessionCreated:	function() { return this._SessionGUID != null; },
-		IsAuthenticated: 	function() { return this._IsAuthenticated; },
+		ProtocolVersion:					function() { return PROTOCOL_VERSION; },
+		AuthenticationMethodEmailPassword:	function() { return AUTHENTICATION_METHOD_EMAIL_PASSWORD; },
+		AuthenticationMethodSecureCookie:	function() { return AUTHENTICATION_METHOD_SECURE_COOKIE; },
+		SessionGUID: 						function() { return this._SessionGUID; },
+		IsSessionCreated:					function() { return this._SessionGUID != null; },
+		IsSessionAuthenticated: 			function() { return this._IsSessionAuthenticated; },
 		
 		Session_Create:			function(callback) 
 		{ 
@@ -144,13 +148,36 @@ PortalClient.prototype = (function()
 			{
 				if(serviceResult.WasSuccess() && serviceResult.EmailPassword() != null && serviceResult.EmailPassword().WasSuccess())
 				{
-					self._IsAuthenticated = true;
-					self.SessionAuthenticated().Raise(serviceResult.EmailPassword().Results()[0]);
+					self._IsSessionAuthenticated = true;
+					self.SessionAuthenticated().Raise(AUTHENTICATION_METHOD_EMAIL_PASSWORD);
 				}
 
 				if(typeof callback === "function")
 					callback(serviceResult);
 			}, "EmailPassword/Login", HTTP_METHOD_GET, {email: email, password: password}, true); 
+		},
+
+		SecureCookie_Create:	function(callback)
+		{ return CallService.call(this, callback, "SecureCookie/Create", HTTP_METHOD_GET); },
+
+		SecureCookie_Delete:	function(callback, guids)
+		{ throw "Method not implemented"; },
+
+		SecureCookie_Login:		function(callback, guid, passwordGUID )
+		{
+			ValidateCallback.call(this, callback);
+			
+			return CallService.call(this, function(serviceResult)
+			{
+				if(serviceResult.WasSuccess() && serviceResult.SecureCookie() != null && serviceResult.SecureCookie().WasSuccess())
+				{
+					self._IsSessionAuthenticated = true;
+					self.SessionAuthenticated().Raise(AUTHENTICATION_METHOD_SECURE_COOKIE);
+				}
+
+				if(typeof callback === "function")
+					callback(serviceResult);
+			}, "SecureCookie/Login", HTTP_METHOD_GET, {guid: guid, passwordGUID: passwordGUID});
 		},
 		
 		Folder_Get:				function(callback, id, folderTypeID, parentID)
@@ -181,16 +208,7 @@ PortalClient.prototype = (function()
 
 		StatsObject_Set:		function(repositoryIdentifier, objectIdentifier, objectTypeID, objectCollectionID, channelIdentifier, channelTypeID, eventTypeID, objectTitle, ip, city, country, userSessionID)
 		{ return CallService.call(this, callback, "StatsObject/Set", HTTP_METHOD_GET, {repositoryIdentifier: repositoryIdentifier, objectIdentifier: objectIdentifier, objectTypeID: objectTypeID, objectCollectionID: objectCollectionID,
-			channelIdentifier: channelIdentifier, channelTypeID: channelTypeID, eventTypeID: eventTypeID, objectTitle: objectTitle, ip: ip, city: city, country: country, userSessionID: userSessionID}, true); },
-
-		SecureCookie_Create:	function(callback)
-		{ return CallService.call(this, callback, "SecureCookie/Create", HTTP_METHOD_GET); },
-
-		SecureCookie_Delete:	function(callback, guids)
-		{ throw "Method not implemented"; },
-
-		SecureCookie_Login:		function(callback, guid, passwordGUID )
-		{ return CallService.call(this, callback, "SecureCookie/Login", HTTP_METHOD_GET, {guid: guid, passwordGUID: passwordGUID}); }
+			channelIdentifier: channelIdentifier, channelTypeID: channelTypeID, eventTypeID: eventTypeID, objectTitle: objectTitle, ip: ip, city: city, country: country, userSessionID: userSessionID}, true); }
 	};
 })();
 
@@ -270,7 +288,7 @@ function PortalServiceResult(data)
 					_emailPassword = new PortalModuleResult(data.ModuleResults[i]);
 					break;
 				case "SecureCookie":
-					_secureCookie = new PortalModuleResult($moduleResult);
+					_secureCookie = new PortalModuleResult(data.ModuleResults[i]);
 					break;
 				case "MCM":
 					_mcm = new PortalModuleResult(data.ModuleResults[i]);
