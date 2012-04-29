@@ -270,6 +270,10 @@ function PortalServiceResult(data)
 	{
 		_error = data;
 	}
+	else if(data instanceof Error)
+	{
+		_error = data.message;
+	}
 	else if(data.ModuleResults.length == 1 && data.ModuleResults[0].Fullname.indexOf("Exception") != -1)
 	{
 		_error = data.ModuleResults[0].Message;
