@@ -140,9 +140,9 @@ PortalClient.prototype = (function()
 		
 		EmailPassword_Login:	function(callback, email, password)
 		{
-			var self = this;
-
 			ValidateCallback.call(this, callback);
+
+			var self = this;
 			
 			return CallService.call(this, function(serviceResult)
 			{
@@ -166,6 +166,8 @@ PortalClient.prototype = (function()
 		SecureCookie_Login:		function(callback, guid, passwordGUID )
 		{
 			ValidateCallback.call(this, callback);
+
+			var self = this;
 			
 			return CallService.call(this, function(serviceResult)
 			{
