@@ -16,7 +16,7 @@
 					
 					client = new PortalClient($(this).find("input[name=ServicePath]").val());
 					
-					client.SessionCreated().Add(function(sender, data)
+					client.SessionAcquired().Add(function(sender, data)
 					{
 						$(".Login").show();
 						$(".SessionID").text(data.SessionGUID);

@@ -8,12 +8,12 @@
 		<script type="text/javascript">
 			PortalClient.RegisterPlugin(function()
 			{
-				this.SessionCreated().Add(function(sender, data) { $(".LogOutput").append("Session Created: " + data.SessionGUID + "<br />"); }); //This refers to a newly created PortalClient instance.
+				this.SessionAcquired().Add(function(sender, data) { $(".LogOutput").append("Session Acquired: " + data.SessionGUID + "<br />"); }); //This refers to a newly created PortalClient instance.
 				
 				return { // All properties of the returned object are added to each PortalClient instance.
 					PrettySession: function()
 					{
-						if(this.IsSessionCreated())
+						if(this.HasSession())
 							return "This PortalClient instances uses the session with GUID: " + this.SessionGUID();
 						else
 							return "This PortalClient instance have no session";

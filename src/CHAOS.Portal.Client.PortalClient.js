@@ -11,7 +11,7 @@ function PortalClient(servicePath, clientGUID, autoCreateSession)
 	clientGUID = typeof clientGUID !== "undefined" ? clientGUID : null;
 	autoCreateSession = typeof autoCreateSession !== "undefined" ? autoCreateSession : true;
 	
-	var _sessionCreated = new PortalEvent(this);
+	var _sessionAcquired = new PortalEvent(this);
 	var _sessionAuthenticated = new PortalEvent(this);
 	
 	this._SessionGUID = null;
@@ -22,7 +22,7 @@ function PortalClient(servicePath, clientGUID, autoCreateSession)
 	
 	this.ServicePath = function() { return servicePath; };
 	this.ClientGUID = function() { return clientGUID; };
-	this.SessionCreated = function() { return _sessionCreated; };
+	this.SessionAcquired = function() { return _sessionAcquired; };
 	this.SessionAuthenticated = function() { return _sessionAuthenticated; };
 	
 	if(autoCreateSession)
@@ -56,6 +56,7 @@ PortalClient.prototype = (function()
 	var HTTP_METHOD_GET = "GET";
 	var AUTHENTICATION_METHOD_EMAIL_PASSWORD = "EmailPassword";
 	var AUTHENTICATION_METHOD_SECURE_COOKIE = "SecureCookie";
+	var AUTHENTICATION_METHOD_EXTERNAL = "External";
 	
 	function CallService(callback, path, httpMethod, parameters, requiresSession)
 	{
@@ -76,8 +77,8 @@ PortalClient.prototype = (function()
 		
 		if(requiresSession)
 		{
-			if(this.SessionGUID() == null)
-				throw "Session not created";
+			if(!this.HasSession())
+				throw "Session not acquired";
 
 			parameters["sessionGUID"] = this.SessionGUID();
 		}
@@ -114,9 +115,22 @@ PortalClient.prototype = (function()
 		ProtocolVersion:					function() { return PROTOCOL_VERSION; },
 		AuthenticationMethodEmailPassword:	function() { return AUTHENTICATION_METHOD_EMAIL_PASSWORD; },
 		AuthenticationMethodSecureCookie:	function() { return AUTHENTICATION_METHOD_SECURE_COOKIE; },
+		AuthenticationMethodExternal:		function() { return AUTHENTICATION_METHOD_EXTERNAL; },
 		SessionGUID: 						function() { return this._SessionGUID; },
-		IsSessionCreated:					function() { return this._SessionGUID != null; },
+		HasSession:							function() { return this._SessionGUID != null; },
 		IsSessionAuthenticated: 			function() { return this._IsSessionAuthenticated; },
+		
+		SetSessionGUID:			function(guid, isAuthenticated)
+		{
+			if(!guid)
+				throw "Parameter guid not valid";
+			
+			this._SessionGUID = guid;
+			this.SessionAcquired().Raise(guid);
+			
+			if(isAuthenticated)
+				this.SessionAuthenticated().Raise(AUTHENTICATION_METHOD_EXTERNAL)
+		},
 		
 		Session_Create:			function(callback) 
 		{ 
@@ -127,11 +141,7 @@ PortalClient.prototype = (function()
 			return CallService.call(this, function(serviceResult)
 			{
 				if(serviceResult.WasSuccess() && serviceResult.Portal() != null && serviceResult.Portal().WasSuccess())
-				{
-					var session = serviceResult.Portal().Results()[0];
-					self._SessionGUID = session.SessionGUID;
-					self.SessionCreated().Raise(session);
-				}
+					self.SetSessionGUID(serviceResult.Portal().Results()[0].SessionGUID);
 
 				if(typeof callback === "function")
 					callback(serviceResult);
