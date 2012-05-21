@@ -49,6 +49,7 @@ PortalClient.RegisterPlugin = function(initializerFunction) { this._pluginInitia
 
 PortalClient.prototype = (function()
 {
+	var CLIENT_VERSION = "0.1.0";
 	var PROTOCOL_VERSION = 4;
 	var FORMAT = "jsonp";
 	var USER_HTTP_STATUS_CODES = false;
@@ -112,6 +113,7 @@ PortalClient.prototype = (function()
 	return {
 		constructor: PortalClient,
 
+		ClientVersion:						function() { return CLIENT_VERSION; },
 		ProtocolVersion:					function() { return PROTOCOL_VERSION; },
 		AuthenticationMethodEmailPassword:	function() { return AUTHENTICATION_METHOD_EMAIL_PASSWORD; },
 		AuthenticationMethodSecureCookie:	function() { return AUTHENTICATION_METHOD_SECURE_COOKIE; },
@@ -201,19 +203,19 @@ PortalClient.prototype = (function()
 		Object_Create:		function(callback, guid, objectTypeID, folderID )
 		{ return CallService.call(this, callback, "Object/Create", HTTP_METHOD_GET, {guid: guid, objectTypeID: objectTypeID, folderID: folderID}); },
 
-		Object_Get:				function(callback, query, sort, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations)
+		Object_Get:				function(callback, query, sort, accessPointGUID, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations)
 		{
 			includeMetadata = typeof includeMetadata !== 'undefined' ? includeMetadata : false;
 			includeFiles = typeof includeFiles !== 'undefined' ? includeFiles : false;
 			includeObjectRelations = typeof includeObjectRelations !== 'undefined' ? includeObjectRelations : false;
-			return CallService.call(this, callback, "Object/Get", HTTP_METHOD_GET, {query: query, sort: sort, pageIndex: pageIndex, pageSize: pageSize, includeMetadata: includeMetadata, includeFiles: includeFiles, includeObjectRelations: includeObjectRelations}, true);
+			return CallService.call(this, callback, "Object/Get", HTTP_METHOD_GET, {query: query, sort: sort, accessPointGUID: accessPointGUID, pageIndex: pageIndex, pageSize: pageSize, includeMetadata: includeMetadata, includeFiles: includeFiles, includeObjectRelations: includeObjectRelations}, true);
 		},
 		
-		Object_GetByFolderID:	function(callback, folderID, includeChildFolders, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations)
-		{ return this.Object_Get(callback, (includeChildFolders ? "(FolderTree:" : "(FolderID:") + folderID + ")", null, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations); },
+		Object_GetByFolderID:	function(callback, folderID, includeChildFolders, sort, accessPointGUID, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations)
+		{ return this.Object_Get(callback, (includeChildFolders ? "(FolderTree:" : "(FolderID:") + folderID + ")", sort, accessPointGUID, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations); },
 		
-		Object_GetByObjectGUID:	function(callback, objectGUID, includeMetadata, includeFiles, includeObjectRelations)
-		{ return this.Object_Get(callback, "(GUID:" + objectGUID + ")", null, 0, 1, includeMetadata, includeFiles, includeObjectRelations); },
+		Object_GetByObjectGUID:	function(callback, objectGUID, accessPointGUID, includeMetadata, includeFiles, includeObjectRelations)
+		{ return this.Object_Get(callback, "(GUID:" + objectGUID + ")", null, accessPointGUID, 0, 1, includeMetadata, includeFiles, includeObjectRelations); },
 		
 		Metadata_Set: function(objectGUID, metadataSchemaGUID, languageCode, revisionID, metadataXML )
 		{  CallService.call(this, callback, "Metadata/Set", HTTP_METHOD_GET, {objectGUID: objectGUID, metadataSchemaGUID: metadataSchemaGUID, languageCode: languageCode, revisionID: revisionID, metadataXML: metadataXML}); },
