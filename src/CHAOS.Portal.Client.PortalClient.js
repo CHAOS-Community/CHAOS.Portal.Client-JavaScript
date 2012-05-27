@@ -140,7 +140,7 @@ PortalClient.prototype = (function()
 
 			ValidateCallback.call(this, callback);
 			
-			return CallService.call(this, function(serviceResult)
+			CallService.call(this, function(serviceResult)
 			{
 				if(serviceResult.WasSuccess() && serviceResult.Portal() != null && serviceResult.Portal().WasSuccess())
 					self.SetSessionGUID(serviceResult.Portal().Results()[0].SessionGUID);
@@ -156,7 +156,7 @@ PortalClient.prototype = (function()
 
 			var self = this;
 			
-			return CallService.call(this, function(serviceResult)
+			CallService.call(this, function(serviceResult)
 			{
 				if(serviceResult.WasSuccess() && serviceResult.EmailPassword() != null && serviceResult.EmailPassword().WasSuccess())
 				{
@@ -170,7 +170,7 @@ PortalClient.prototype = (function()
 		},
 
 		SecureCookie_Create:	function(callback)
-		{ return CallService.call(this, callback, "SecureCookie/Create", HTTP_METHOD_GET); },
+		{ CallService.call(this, callback, "SecureCookie/Create", HTTP_METHOD_GET, null, true); },
 
 		SecureCookie_Delete:	function(callback, guids)
 		{ throw "Method not implemented"; },
@@ -181,7 +181,7 @@ PortalClient.prototype = (function()
 
 			var self = this;
 			
-			return CallService.call(this, function(serviceResult)
+			CallService.call(this, function(serviceResult)
 			{
 				if(serviceResult.WasSuccess() && serviceResult.SecureCookie() != null && serviceResult.SecureCookie().WasSuccess())
 				{
@@ -191,38 +191,37 @@ PortalClient.prototype = (function()
 
 				if(typeof callback === "function")
 					callback(serviceResult);
-			}, "SecureCookie/Login", HTTP_METHOD_GET, {guid: guid, passwordGUID: passwordGUID});
+			}, "SecureCookie/Login", HTTP_METHOD_GET, {guid: guid, passwordGUID: passwordGUID}, true);
 		},
 		
 		Folder_Get:				function(callback, id, folderTypeID, parentID)
-		{ return CallService.call(this, callback, "Folder/Get", HTTP_METHOD_GET, {id: id, folderTypeID: folderTypeID, parentID: parentID}, true); },
+		{ CallService.call(this, callback, "Folder/Get", HTTP_METHOD_GET, {id: id, folderTypeID: folderTypeID, parentID: parentID}, true); },
 
-		MetadataSchema_Get:		function(metadataSchemaGUID)
-		{ return CallService.call(this, callback, "MetadataSchema/Get", HTTP_METHOD_GET, {metadataSchemaGUID: metadataSchemaGUID}); },
+		MetadataSchema_Get:		function(callback, metadataSchemaGUID)
+		{ CallService.call(this, callback, "MetadataSchema/Get", HTTP_METHOD_GET, {metadataSchemaGUID: metadataSchemaGUID}, true); },
 
 		Object_Create:		function(callback, guid, objectTypeID, folderID )
-		{ return CallService.call(this, callback, "Object/Create", HTTP_METHOD_GET, {guid: guid, objectTypeID: objectTypeID, folderID: folderID}); },
+		{ CallService.call(this, callback, "Object/Create", HTTP_METHOD_GET, {guid: guid, objectTypeID: objectTypeID, folderID: folderID}, true); },
 
 		Object_Get:				function(callback, query, sort, accessPointGUID, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations)
 		{
 			includeMetadata = typeof includeMetadata !== 'undefined' ? includeMetadata : false;
 			includeFiles = typeof includeFiles !== 'undefined' ? includeFiles : false;
 			includeObjectRelations = typeof includeObjectRelations !== 'undefined' ? includeObjectRelations : false;
-			return CallService.call(this, callback, "Object/Get", HTTP_METHOD_GET, {query: query, sort: sort, accessPointGUID: accessPointGUID, pageIndex: pageIndex, pageSize: pageSize, includeMetadata: includeMetadata, includeFiles: includeFiles, includeObjectRelations: includeObjectRelations}, true);
+			CallService.call(this, callback, "Object/Get", HTTP_METHOD_GET, {query: query, sort: sort, accessPointGUID: accessPointGUID, pageIndex: pageIndex, pageSize: pageSize, includeMetadata: includeMetadata, includeFiles: includeFiles, includeObjectRelations: includeObjectRelations}, true);
 		},
 		
 		Object_GetByFolderID:	function(callback, folderID, includeChildFolders, sort, accessPointGUID, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations)
-		{ return this.Object_Get(callback, (includeChildFolders ? "(FolderTree:" : "(FolderID:") + folderID + ")", sort, accessPointGUID, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations); },
+		{ this.Object_Get(callback, (includeChildFolders ? "(FolderTree:" : "(FolderID:") + folderID + ")", sort, accessPointGUID, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations); },
 		
 		Object_GetByObjectGUID:	function(callback, objectGUID, accessPointGUID, includeMetadata, includeFiles, includeObjectRelations)
-		{ return this.Object_Get(callback, "(GUID:" + objectGUID + ")", null, accessPointGUID, 0, 1, includeMetadata, includeFiles, includeObjectRelations); },
+		{ this.Object_Get(callback, "(GUID:" + objectGUID + ")", null, accessPointGUID, 0, 1, includeMetadata, includeFiles, includeObjectRelations); },
 		
-		Metadata_Set: function(objectGUID, metadataSchemaGUID, languageCode, revisionID, metadataXML )
-		{  CallService.call(this, callback, "Metadata/Set", HTTP_METHOD_GET, {objectGUID: objectGUID, metadataSchemaGUID: metadataSchemaGUID, languageCode: languageCode, revisionID: revisionID, metadataXML: metadataXML}); },
+		Metadata_Set: 			function(callback, objectGUID, metadataSchemaGUID, languageCode, revisionID, metadataXML )
+		{ CallService.call(this, callback, "Metadata/Set", HTTP_METHOD_GET, {objectGUID: objectGUID, metadataSchemaGUID: metadataSchemaGUID, languageCode: languageCode, revisionID: revisionID, metadataXML: metadataXML}, true); },
 
-		StatsObject_Set:		function(repositoryIdentifier, objectIdentifier, objectTypeID, objectCollectionID, channelIdentifier, channelTypeID, eventTypeID, objectTitle, ip, city, country, userSessionID)
-		{ return CallService.call(this, callback, "StatsObject/Set", HTTP_METHOD_GET, {repositoryIdentifier: repositoryIdentifier, objectIdentifier: objectIdentifier, objectTypeID: objectTypeID, objectCollectionID: objectCollectionID,
-			channelIdentifier: channelIdentifier, channelTypeID: channelTypeID, eventTypeID: eventTypeID, objectTitle: objectTitle, ip: ip, city: city, country: country, userSessionID: userSessionID}, true); }
+		StatsObject_Set:		function(callback, repositoryIdentifier, objectIdentifier, objectTypeID, objectCollectionID, channelIdentifier, channelTypeID, eventTypeID, objectTitle, ip, city, country, userSessionID)
+		{ CallService.call(this, callback, "StatsObject/Set", HTTP_METHOD_GET, {repositoryIdentifier: repositoryIdentifier, objectIdentifier: objectIdentifier, objectTypeID: objectTypeID, objectCollectionID: objectCollectionID, channelIdentifier: channelIdentifier, channelTypeID: channelTypeID, eventTypeID: eventTypeID, objectTitle: objectTitle, ip: ip, city: city, country: country, userSessionID: userSessionID}, true); }
 	};
 })();
 
