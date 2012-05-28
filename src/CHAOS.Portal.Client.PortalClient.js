@@ -49,7 +49,7 @@ PortalClient.RegisterPlugin = function(initializerFunction) { this._pluginInitia
 
 PortalClient.prototype = (function()
 {
-	var CLIENT_VERSION = "0.1.1";
+	var CLIENT_VERSION = "0.2.0";
 	var PROTOCOL_VERSION = 4;
 	var FORMAT = "jsonp";
 	var USER_HTTP_STATUS_CODES = false;
@@ -203,19 +203,20 @@ PortalClient.prototype = (function()
 		Object_Create:		function(callback, guid, objectTypeID, folderID )
 		{ CallService.call(this, callback, "Object/Create", HTTP_METHOD_GET, {guid: guid, objectTypeID: objectTypeID, folderID: folderID}, true); },
 
-		Object_Get:				function(callback, query, sort, accessPointGUID, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations)
+		Object_Get:				function(callback, query, sort, accessPointGUID, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations, includeAccessPoints)
 		{
 			includeMetadata = typeof includeMetadata !== 'undefined' ? includeMetadata : false;
 			includeFiles = typeof includeFiles !== 'undefined' ? includeFiles : false;
 			includeObjectRelations = typeof includeObjectRelations !== 'undefined' ? includeObjectRelations : false;
+			includeAccessPoints = typeof includeAccessPoints !== 'undefined' ? includeAccessPoints : false;
 			CallService.call(this, callback, "Object/Get", HTTP_METHOD_GET, {query: query, sort: sort, accessPointGUID: accessPointGUID, pageIndex: pageIndex, pageSize: pageSize, includeMetadata: includeMetadata, includeFiles: includeFiles, includeObjectRelations: includeObjectRelations}, true);
 		},
 		
-		Object_GetByFolderID:	function(callback, folderID, includeChildFolders, sort, accessPointGUID, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations)
-		{ this.Object_Get(callback, (includeChildFolders ? "(FolderTree:" : "(FolderID:") + folderID + ")", sort, accessPointGUID, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations); },
+		Object_GetByFolderID:	function(callback, folderID, includeChildFolders, sort, accessPointGUID, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations, includeAccessPoints)
+		{ this.Object_Get(callback, (includeChildFolders ? "(FolderTree:" : "(FolderID:") + folderID + ")", sort, accessPointGUID, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations, includeAccessPoints); },
 		
-		Object_GetByObjectGUID:	function(callback, objectGUID, accessPointGUID, includeMetadata, includeFiles, includeObjectRelations)
-		{ this.Object_Get(callback, "(GUID:" + objectGUID + ")", null, accessPointGUID, 0, 1, includeMetadata, includeFiles, includeObjectRelations); },
+		Object_GetByObjectGUID:	function(callback, objectGUID, accessPointGUID, includeMetadata, includeFiles, includeObjectRelations, includeAccessPoints)
+		{ this.Object_Get(callback, "(GUID:" + objectGUID + ")", null, accessPointGUID, 0, 1, includeMetadata, includeFiles, includeObjectRelations, includeAccessPoints); },
 		
 		Object_SetPublishSettings: function(callback, objectGUID, accessPointGUID, startDate, endDate)
 		{ CallService.call(this, callback, "Object/SetPublishSettings", HTTP_METHOD_GET, {objectGUID: objectGUID, accessPointGUID: accessPointGUID, startDate: startDate, endDate: endDate}, true); },
