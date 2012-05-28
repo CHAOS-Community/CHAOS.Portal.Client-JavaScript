@@ -49,7 +49,7 @@ PortalClient.RegisterPlugin = function(initializerFunction) { this._pluginInitia
 
 PortalClient.prototype = (function()
 {
-	var CLIENT_VERSION = "0.1.0";
+	var CLIENT_VERSION = "0.1.1";
 	var PROTOCOL_VERSION = 4;
 	var FORMAT = "jsonp";
 	var USER_HTTP_STATUS_CODES = false;
@@ -216,6 +216,9 @@ PortalClient.prototype = (function()
 		
 		Object_GetByObjectGUID:	function(callback, objectGUID, accessPointGUID, includeMetadata, includeFiles, includeObjectRelations)
 		{ this.Object_Get(callback, "(GUID:" + objectGUID + ")", null, accessPointGUID, 0, 1, includeMetadata, includeFiles, includeObjectRelations); },
+		
+		Object_SetPublishSettings: function(callback, objectGUID, accessPointGUID, startDate, endDate)
+		{ CallService.call(this, callback, "Object/SetPublishSettings", HTTP_METHOD_GET, {objectGUID: objectGUID, accessPointGUID: accessPointGUID, startDate: startDate, endDate: endDate}, true); },
 		
 		Metadata_Set: 			function(callback, objectGUID, metadataSchemaGUID, languageCode, revisionID, metadataXML )
 		{ CallService.call(this, callback, "Metadata/Set", HTTP_METHOD_GET, {objectGUID: objectGUID, metadataSchemaGUID: metadataSchemaGUID, languageCode: languageCode, revisionID: revisionID, metadataXML: metadataXML}, true); },
