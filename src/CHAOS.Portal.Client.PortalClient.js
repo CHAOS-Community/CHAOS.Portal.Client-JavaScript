@@ -348,5 +348,6 @@ function PortalModuleResult(data)
 
 	this.Error = function() { return _error; };
 	this.WasSuccess = function() { return this.Error() == null; };
-	this.Results = function () { return _results; };
+	this.Results = function() { return _results; };
+	this.TotalCount = function() { return data.TotalCount; }
 }

@@ -59,6 +59,7 @@
 			{
 				client.Object_GetByFolderID(function(serviceResult)
 				{
+					$(".ObjectCount").text(serviceResult.MCM().TotalCount());
 					var results = serviceResult.MCM().Results();
 					for(var i = 0; i < results.length; i++)
 					{
@@ -90,7 +91,7 @@
 				Folders: <span class="Folders"></span>
 			</div>
 			<div>
-				Objects: <span class="Objects"></span>
+				Objects (<span class="ObjectCount"></span>): <span class="Objects"></span>
 			</div>
 		</div>
 	</body>
