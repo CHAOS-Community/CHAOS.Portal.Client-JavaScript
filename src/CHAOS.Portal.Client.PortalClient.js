@@ -49,7 +49,7 @@ PortalClient.RegisterPlugin = function(initializerFunction) { this._pluginInitia
 
 PortalClient.prototype = (function()
 {
-	var CLIENT_VERSION = "0.2.1";
+	var CLIENT_VERSION = "1.1.0";
 	var PROTOCOL_VERSION = 4;
 	var FORMAT = "jsonp";
 	var USER_HTTP_STATUS_CODES = false;
@@ -225,7 +225,13 @@ PortalClient.prototype = (function()
 		{ CallService.call(this, callback, "Metadata/Set", HTTP_METHOD_GET, {objectGUID: objectGUID, metadataSchemaGUID: metadataSchemaGUID, languageCode: languageCode, revisionID: revisionID, metadataXML: metadataXML}, true); },
 
 		StatsObject_Set:		function(callback, repositoryIdentifier, objectIdentifier, objectTypeID, objectCollectionID, channelIdentifier, channelTypeID, eventTypeID, objectTitle, ip, city, country, userSessionID)
-		{ CallService.call(this, callback, "StatsObject/Set", HTTP_METHOD_GET, {repositoryIdentifier: repositoryIdentifier, objectIdentifier: objectIdentifier, objectTypeID: objectTypeID, objectCollectionID: objectCollectionID, channelIdentifier: channelIdentifier, channelTypeID: channelTypeID, eventTypeID: eventTypeID, objectTitle: objectTitle, IP: ip, city: city, country: country, userSessionID: userSessionID}, true); }
+		{ CallService.call(this, callback, "StatsObject/Set", HTTP_METHOD_GET, {repositoryIdentifier: repositoryIdentifier, objectIdentifier: objectIdentifier, objectTypeID: objectTypeID, objectCollectionID: objectCollectionID, channelIdentifier: channelIdentifier, channelTypeID: channelTypeID, eventTypeID: eventTypeID, objectTitle: objectTitle, IP: ip, city: city, country: country, userSessionID: userSessionID}, true); },
+
+		Upload_Initiate: function(callback, objectGUID, formatID, fileSize, supportMultipleChunks)
+		{
+			supportMultipleChunks = typeof supportMultipleChunks !== 'undefined' ? supportMultipleChunks : false;
+			CallService.call(this, callback, "Upload/Initiate", HTTP_METHOD_GET, {objectGUID: objectGUID, formatID: formatID, fileSize: fileSize, supportMultipleChunks: supportMultipleChunks}, true);
+		}
 	};
 })();
 
@@ -282,7 +288,8 @@ function PortalServiceResult(data)
 	var _secureCookie = null;
 	var _mcm = null;
 	var _statistics = null;
-	
+	var _upload = null;
+
 	if(data instanceof String)
 	{
 		_error = data;
@@ -317,6 +324,9 @@ function PortalServiceResult(data)
 				case "Statistics":
 					_statistics = new PortalModuleResult(data.ModuleResults[i]);
 					break;
+				case "Upload":
+					_upload = new PortalModuleResult(data.ModuleResults[i]);
+					break;
 			}
 		}
 	}
@@ -328,6 +338,7 @@ function PortalServiceResult(data)
 	this.SecureCookie = function() { return _secureCookie; };
 	this.MCM = function() { return _mcm; };
 	this.Statistics = function() { return _statistics; };
+	this.Upload = function() { return _upload; };
 }
 
 // ******************************** PortalModuleResult ********************************
