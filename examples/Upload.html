@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+		"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>JavaScript CHAOS Portal Client Basic Example</title>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script type="text/javascript" src="../src/CHAOS.Portal.Client.PortalClient.js"></script>
+		<script type="text/javascript">
+			var client = null;
+			var objectGUID = null;
+			var formatID = null;
+
+			$(document).ready(function(event)
+			{
+				$(".EnterServicePath").submit(function(event)
+				{
+					event.preventDefault();
+
+					client = new PortalClient($(this).find("input[name=ServicePath]").val());
+
+					client.SessionAcquired().Add(function(sender, data)
+					{
+						$(".Login").show();
+						$(".SessionGUID").text(data.SessionGUID);
+					});
+
+					$(this).hide();
+				});
+
+				$(".Login").submit(function(event)
+				{
+					event.preventDefault();
+
+					client.EmailPassword_Login(function(data)
+					{
+						$(".Results").show();
+						$(".UserID").text(data.EmailPassword().Results()[0].GUID);
+
+						$(".ObjectSelection").show();
+
+					}, $(this).find("input[name=Email]").val(), $(this).find("input[name=Password]").val());
+
+					$(this).hide();
+				});
+
+				$(".ObjectSelection").submit(function(event)
+				{
+					event.preventDefault();
+
+					objectGUID = $(this).find("input[name=objectGUID]").val();
+					formatID = $(this).find("input[name=formatID]").val();
+
+					$(".ObjectGUID").text(objectGUID);
+
+					UpdateObject();
+
+					client.Upload_Initiate(function(serviceResult)
+					{
+						var fileForm = $(".FileUpload");
+						fileForm.find("input[name=uploadID]").val(serviceResult.Upload().Results()[0].UploadID);
+						fileForm.attr("action", client.ServicePath() + "Upload/Transfer");
+						fileForm.show();
+					}, objectGUID, formatID, 5242880, false);
+
+					$(this).hide();
+				});
+			});
+
+			function UpdateObject()
+			{
+				client.Object_GetByObjectGUID(function(serviceResult)
+				{
+					var result = serviceResult.MCM().Results()[0];
+
+					$(".FileCount").text(result.Files.length);
+
+					for(var i = 0; i < result.Files.length; i++)
+						$(".Files").append("<br />" + result.Files[i].Filename);
+
+				}, objectGUID, null, false, true);
+			}
+		</script>
+	</head>
+	<body>
+		<h1>JavaScript CHAOS Portal Client Upload Example</h1>
+		<form class="EnterServicePath" action="">
+			<label>Service Path: <input name="ServicePath" type="text"></label>
+			<input type="submit"/>
+		</form>
+		<form class="Login" action="" style="display: none;">
+			<label>Email: <input name="Email" type="text"></label>
+			<label>Password: <input name="Password" type="password"></label>
+			<input type="submit"/>
+		</form>
+		<form class="ObjectSelection" action="" style="display: none;">
+			<label>ObjectGUID: <input name="objectGUID" type="text"></label>
+			<label>FormatID: <input name="formatID" type="text"></label>
+			<input type="submit"/>
+		</form>
+		<form class="FileUpload" action="" method="post" enctype="multipart/form-data" style="display: none;">
+			<label>File: <input name="fileData" type="file"></label>
+			<input type="hidden" name="chunkIndex" value="0" />
+			<input type="hidden" name="uploadID" />
+			<input type="submit"/>
+		</form>
+		<div class="Results" style="display: none">
+			<div>
+				SessionGUID: <span class="SessionGUID"></span>
+			</div>
+			<div>
+				UserID: <span class="UserID"></span>
+			</div>
+			<div>
+				ObjectGUID: <span class="ObjectGUID"></span>
+			</div>
+			<div>
+				Files (<span class="FileCount"></span>): <span class="Files"></span>
+			</div>
+		</div>
+	</body>
+</html>
