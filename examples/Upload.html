@@ -21,7 +21,7 @@
 					client.SessionAcquired().Add(function(sender, data)
 					{
 						$(".Login").show();
-						$(".SessionGUID").text(data.SessionGUID);
+						$(".SessionGUID").text(data.SessionGUID());
 					});
 
 					$(this).hide();
@@ -31,13 +31,19 @@
 				{
 					event.preventDefault();
 
-					client.EmailPassword_Login(function(data)
+					client.EmailPassword_Login(function(serviceResult)
 					{
-						$(".Results").show();
-						$(".UserID").text(data.EmailPassword().Results()[0].GUID);
+						if(serviceResult.Error() != null)
+							ReportError(serviceResult.Error());
+						else if(serviceResult.EmailPassword().Error() != null)
+							ReportError(serviceResult.EmailPassword().Error());
+						else
+						{
+							$(".Results").show();
+							$(".UserID").text(serviceResult.EmailPassword().Results()[0].GUID);
 
-						$(".ObjectSelection").show();
-
+							$(".ObjectSelection").show();
+						}
 					}, $(this).find("input[name=Email]").val(), $(this).find("input[name=Password]").val());
 
 					$(this).hide();
@@ -56,10 +62,17 @@
 
 					client.Upload_Initiate(function(serviceResult)
 					{
-						var fileForm = $(".FileUpload");
-						fileForm.find("input[name=uploadID]").val(serviceResult.Upload().Results()[0].UploadID);
-						fileForm.attr("action", client.ServicePath() + "Upload/Transfer");
-						fileForm.show();
+						if(serviceResult.Error() != null)
+							ReportError(serviceResult.Error());
+						else if(serviceResult.Upload().Error() != null)
+							ReportError(serviceResult.Upload().Error());
+						else
+						{
+							var fileForm = $(".FileUpload");
+							fileForm.find("input[name=uploadID]").val(serviceResult.Upload().Results()[0].UploadID);
+							fileForm.attr("action", client.ServicePath() + "Upload/Transfer");
+							fileForm.show();
+						}
 					}, objectGUID, formatID, 5242880, false);
 
 					$(this).hide();
@@ -70,14 +83,36 @@
 			{
 				client.Object_GetByObjectGUID(function(serviceResult)
 				{
-					var result = serviceResult.MCM().Results()[0];
+					if(serviceResult.Error() != null)
+						ReportError(serviceResult.Error());
+					else if(serviceResult.MCM().Error() != null)
+						ReportError(serviceResult.MCM().Error());
+					else if(serviceResult.MCM().Results() == null || serviceResult.MCM().Results().length == 0)
+						ReportError("Object not found");
+					else
+					{
+						var result = serviceResult.MCM().Results()[0];
 
-					$(".FileCount").text(result.Files.length);
+						if(result.Files == null)
+						{
+							$(".FileCount").text(0);
+						}
+						else
+						{
+							$(".FileCount").text(result.Files.length);
 
-					for(var i = 0; i < result.Files.length; i++)
-						$(".Files").append("<br />" + result.Files[i].Filename);
+							for(var i = 0; i < result.Files.length; i++)
+								$(".Files").append("<br />" + result.Files[i].Filename);
+						}
+					}
 
 				}, objectGUID, null, false, true);
+			}
+
+			function ReportError(message)
+			{
+				$(".ErrorMessage").text(message);
+				$(".Error").show();
 			}
 		</script>
 	</head>
@@ -116,6 +151,9 @@
 			<div>
 				Files (<span class="FileCount"></span>): <span class="Files"></span>
 			</div>
+		</div>
+		<div class="Error" style="display: none; color: red;">
+			An error occured: <span class="ErrorMessage"></span>
 		</div>
 	</body>
 </html>
