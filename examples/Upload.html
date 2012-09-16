@@ -8,7 +8,7 @@
 		<script type="text/javascript">
 			var client = null;
 			var objectGUID = null;
-			var formatID = null;
+			var formatTypeID = null;
 
 			$(document).ready(function(event)
 			{
@@ -54,7 +54,7 @@
 					event.preventDefault();
 
 					objectGUID = $(this).find("input[name=objectGUID]").val();
-					formatID = $(this).find("input[name=formatID]").val();
+					formatTypeID = $(this).find("input[name=formatTypeID]").val();
 
 					$(".ObjectGUID").text(objectGUID);
 
@@ -73,7 +73,7 @@
 							fileForm.attr("action", client.ServicePath() + "Upload/Transfer");
 							fileForm.show();
 						}
-					}, objectGUID, formatID, 5242880, false);
+					}, objectGUID, formatTypeID, 5242880, false);
 
 					$(this).hide();
 				});
@@ -129,7 +129,7 @@
 		</form>
 		<form class="ObjectSelection" action="" style="display: none;">
 			<label>ObjectGUID: <input name="objectGUID" type="text"></label>
-			<label>FormatID: <input name="formatID" type="text"></label>
+			<label>FormatTypeID: <input name="formatTypeID" type="text"></label>
 			<input type="submit"/>
 		</form>
 		<form class="FileUpload" action="" method="post" enctype="multipart/form-data" style="display: none;">
