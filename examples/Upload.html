@@ -70,6 +70,7 @@
 						{
 							var fileForm = $(".FileUpload");
 							fileForm.find("input[name=uploadID]").val(serviceResult.Upload().Results()[0].UploadID);
+							fileForm.find("input[name=sessionGUID]").val(client.SessionGUID());
 							fileForm.attr("action", client.ServicePath() + "Upload/Transfer");
 							fileForm.show();
 						}
@@ -136,6 +137,7 @@
 			<label>File: <input name="fileData" type="file"></label>
 			<input type="hidden" name="chunkIndex" value="0" />
 			<input type="hidden" name="uploadID" />
+			<input type="hidden" name="sessionGUID" />
 			<input type="submit"/>
 		</form>
 		<div class="Results" style="display: none">
