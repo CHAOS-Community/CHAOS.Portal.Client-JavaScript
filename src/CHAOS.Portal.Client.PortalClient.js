@@ -7,6 +7,9 @@ function PortalClient(servicePath, clientGUID, autoCreateSession)
 {
 	if(typeof servicePath === "undefined")
 		throw "Parameter servicePath must be set";
+
+	if(new RegExp("/v\\d+(?:/|$)").test(servicePath))
+		throw "Protocol version should not be part of service path";
 	
 	clientGUID = typeof clientGUID !== "undefined" ? clientGUID : null;
 	autoCreateSession = typeof autoCreateSession !== "undefined" ? autoCreateSession : true;
@@ -49,7 +52,7 @@ PortalClient.RegisterPlugin = function(initializerFunction) { this._pluginInitia
 
 PortalClient.prototype = (function()
 {
-	var CLIENT_VERSION = "1.1.1";
+	var CLIENT_VERSION = "1.2.0";
 	var PROTOCOL_VERSION = 4;
 	var FORMAT = "jsonp";
 	var USER_HTTP_STATUS_CODES = false;
@@ -89,7 +92,7 @@ PortalClient.prototype = (function()
 
 		$.ajax({
 			type: httpMethod,
-			url: this.ServicePath() + path,
+			url: this.ServicePath() + "v" + PROTOCOL_VERSION + "/" + path,
 			data: parameters,
 			success: function (data, textStatus, jqXHR)
 			{
