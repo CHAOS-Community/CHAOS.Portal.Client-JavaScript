@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+		"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>JavaScript CHAOS Portal Client Folder Exploration Example</title>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script type="text/javascript" src="../src/CHAOS.Portal.Client.PortalClient.js"></script>
+		<script type="text/javascript">
+			var client = null;
+			var objectGUID = null;
+			var formatTypeID = null;
+
+			$(document).ready(function(event)
+			{
+        // Login button activated
+				$(".Login").submit(function(event)
+				{
+					event.preventDefault();
+
+          // Create session
+					client = new PortalClient($(this).find("input[name=ServicePath]").val());
+
+          var email = $(this).find("input[name=Email]").val();
+          var password = $(this).find("input[name=Password]").val();
+
+          // Session creation callback
+					client.SessionAcquired().Add(function(sender, sessionGUID)
+					{
+						$("#login-msg").append("Created session. GUID: " + sessionGUID + "<br>");
+
+            // Login
+            client.EmailPassword_Login(function(serviceResult)
+            {
+              if(serviceResult.Error() != null)
+                $("#login-msg").append("Login error: " + serviceResult.Error() + "<br>");
+              else if(serviceResult.EmailPassword().Error() != null)
+                $("#login-msg").append("Login error: " + serviceResult.EmailPassword().Error() + "<br>");
+              // Login successful
+              else
+              {
+                $("#login-msg").append("Logged in. UserID: " + serviceResult.EmailPassword().Results()[0].GUID + "<br>");
+
+                GetFolder($("#folder-table tbody"), false, 0, null, null, null);
+              }
+            }, email, password);
+
+
+					});
+
+				});
+
+        function GetFolder(elem, after, indent, ID, ParentID) {
+          client.Folder_Get(function(serviceResult) {
+              for (var i = 0; i < serviceResult.MCM().Count(); i++) {
+                var td_id = $("<td>"+serviceResult.MCM().Results()[i].ID+"</td>");
+                var td_name = $("<td>"+serviceResult.MCM().Results()[i].Name+" ("+serviceResult.MCM().Results()[i].NumberOfObjects+")</td>").css("padding-left", indent);;
+                var tr = $("<tr></tr>");
+                tr.append(td_id);
+                tr.append(td_name);
+                if (after === true) {
+                  elem.after(tr);
+                } else {
+                  elem.append(tr);
+                }
+                tr.data("ID", serviceResult.MCM().Results()[i].ID);
+                tr.data("ParentID", serviceResult.MCM().Results()[i].ParentID);
+
+                tr.click(function(event) {
+                  if ($(this).data("open") === undefined) {
+                    $(this).data("open", true);
+                    GetFolder($(this), true, indent + 10, null, $(this).data("ID"));
+                  } else if ($(this).data("open") === true) {
+                    var ID = $(this).data("ID");
+                    $(this).data("open", false);
+                    $(this).parent().children().filter(function() { return $(this).data("ParentID") === ID; }).hide();
+                  } else if ($(this).data("open") === false) {
+                    var ID = $(this).data("ID");
+                    $(this).data("open", true);
+                    $(this).parent().children().filter(function() { return $(this).data("ParentID") === ID; }).show();
+                  }
+                });
+              }
+              //serviceResult.MCM().Results()[0]
+          }, ID, null, ParentID);
+        }
+
+				$(".ObjectSelection").submit(function(event)
+				{
+					event.preventDefault();
+
+					objectGUID = $(this).find("input[name=objectGUID]").val();
+					formatTypeID = $(this).find("input[name=formatTypeID]").val();
+
+					$(".ObjectGUID").text(objectGUID);
+
+					UpdateObject();
+
+					client.Upload_Initiate(function(serviceResult)
+					{
+						if(serviceResult.Error() != null)
+							ReportError(serviceResult.Error());
+						else if(serviceResult.Upload().Error() != null)
+							ReportError(serviceResult.Upload().Error());
+						else
+						{
+							var fileForm = $(".FileUpload");
+							fileForm.find("input[name=uploadID]").val(serviceResult.Upload().Results()[0].UploadID);
+							fileForm.find("input[name=sessionGUID]").val(client.SessionGUID());
+							fileForm.attr("action", client.ServicePath() + "Upload/Transfer");
+							fileForm.show();
+						}
+					}, objectGUID, formatTypeID, 5242880, false);
+
+					$(this).hide();
+				});
+			});
+
+			function UpdateObject()
+			{
+				client.Object_GetByObjectGUID(function(serviceResult)
+				{
+					if(serviceResult.Error() != null)
+						ReportError(serviceResult.Error());
+					else if(serviceResult.MCM().Error() != null)
+						ReportError(serviceResult.MCM().Error());
+					else if(serviceResult.MCM().Results() == null || serviceResult.MCM().Results().length == 0)
+						ReportError("Object not found");
+					else
+					{
+						var result = serviceResult.MCM().Results()[0];
+
+						if(result.Files == null)
+						{
+							$(".FileCount").text(0);
+						}
+						else
+						{
+							$(".FileCount").text(result.Files.length);
+
+							for(var i = 0; i < result.Files.length; i++)
+								$(".Files").append("<br />" + result.Files[i].Filename);
+						}
+					}
+
+				}, objectGUID, null, false, true);
+			}
+
+			function ReportError(message)
+			{
+				$(".ErrorMessage").text(message);
+				$(".Error").show();
+			}
+		</script>
+	</head>
+	<body>
+		<h1>JavaScript CHAOS Portal Client Folder Exploration Example</h1>
+    <div style="float: left">
+      <form class="Login" action="" style="">
+        <label><input name="ServicePath" placeholder="Service url" type="text" value="http://api.test.chaos-systems.com/"></label><br>
+        <label><input name="Email" placeholder="Email" type="text"></label><br>
+        <label><input name="Password" placeholder="password" type="password"></label><br>
+        <input type="submit" value="Login" />
+      </form>
+    </div>
+    <div id="login-msg" style="float: left; clear: right">
+    </div>
+    <div style="clear: both">
+      <table id="folder-table">
+        <thead>
+          <th>ID</th>
+          <th>Name</th>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+		</div>
+	</body>
+</html>
