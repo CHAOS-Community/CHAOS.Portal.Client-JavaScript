@@ -1,3 +1,5 @@
+**IMPORTANT - This project has been superseded by [TypeScript client](https://github.com/CHAOS-Community/CHAOS.Portal.Client-TypeScript) (fully JavaScript compatible)**  
+  
 #CHAOS.Portal.Client (JavaScript)
 This is a JavaScript Portal API Client. It enables easy communication with a CHAOS Portal API (protocol version 4).
 
