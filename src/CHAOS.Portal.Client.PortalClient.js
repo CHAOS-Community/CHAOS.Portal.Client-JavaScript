@@ -247,6 +247,8 @@ function PortalEvent(sender)
 
 	this._Sender = sender;
 	this._Handlers = new Array();
+	this._Raised = false;
+	this._Data = null;
 }
 
 PortalEvent.prototype =
@@ -258,7 +260,13 @@ PortalEvent.prototype =
 		if (handler == undefined || handler == null)
 			throw "handler must be defined";
 
-		this._Handlers.push(handler);
+		if (this._Raised) {
+			handler(this._Sender, this._Data);
+		}
+		else
+		{
+			this._Handlers.push(handler);
+		}
 	},
 
 	Remove: function (handler)
@@ -276,6 +284,9 @@ PortalEvent.prototype =
 
 	Raise: function (data)
 	{
+		this._Raised = true;
+		this._Data = data;
+
 		for (i = 0; i < this._Handlers.length; i++)
 			this._Handlers[i](this._Sender, data);
 	}
