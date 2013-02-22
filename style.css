@@ -1,0 +1,101 @@
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans);
+@import url(http://fonts.googleapis.com/css?family=PT+Sans);
+@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro);
+
+body {
+  font-family: 'PT Sans', 'Droid Sans', 'Lato', verdana, arial, sans-serif;
+  /* font-family: 'Droid Sans', 'Lato', verdana, arial, sans-serif; */
+  font-size: 10pt;
+
+  text-align: center;
+}
+
+/* Centered div: http://stackoverflow.com/questions/114543/how-to-center-a-div-in-a-div-horizontallyhttp://stackoverflow.com/questions/114543/how-to-center-a-div-in-a-div-horizontally */
+div#body-column {
+  display: inline-block;
+  width: 600px;
+  text-align: left;
+}
+
+h1 {
+  margin-bottom: 0;
+}
+h2 {
+  margin-top: 0;
+  color: #B0B0B0;
+  text-align: right;
+}
+
+p#intro {
+ background-color: #E0FFE0;
+  /* border-bottom: 1px solid black; */
+  /* border-top: 1px solid black; */
+  color: #555555;
+  font-size: 1.2em;
+}
+dfn {
+  font-style: normal;
+  font-weight: bold;
+}
+
+p br {
+  display: block;
+  /* height: 1.5em; */
+  margin-top: 0.2em;
+  line-height: 0.2em;
+}
+
+div.try-code {
+  text-align: right;
+}
+
+p code {
+  background-color: #E3E3E3;
+}
+
+aside.note p:before {
+  font-style: italic;
+  content: 'Note: ';
+  margin-right: 10px;
+}
+aside.note {
+  margin-left:  20px;
+  padding-left: 10px;
+  background-color: #FFE6E6;
+  color: #666;
+}
+
+
+a.prev-page {
+  /* display: block; */
+  float: left;
+  /* text-align: right; */
+}
+a.next-page {
+  /* display: block; */
+  float: right;
+  /* text-align: right; */
+}
+
+/* SyntaxHighlighter specific CSS BEGIN */
+div.syntaxhighlighter {
+  margin: 0 0 !important;
+}
+
+/* div.syntaxhighlighter table tr td div.line { */
+/*   font-family: 'Source Sans Pro', monospace, sans-serif !important; */
+/* } */
+
+/* div.syntaxhighlighter table tr td div.line.alt1, */
+/* div.syntaxhighlighter table tr td div.line.alt2 { */
+div.syntaxhighlighter div.line.alt1,
+div.syntaxhighlighter div.line.alt2 {
+  /* font-family: Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif; */
+  /* font-size: 9pt; */
+  background-color: #F3F3F3 !important;
+}
+
+div.syntaxhighlighter td.gutter div.line {
+  background-color: lightgray !important;
+}
+/* SyntaxHighlighter specific CSS END */
