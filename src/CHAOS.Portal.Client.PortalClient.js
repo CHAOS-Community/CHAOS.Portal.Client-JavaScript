@@ -220,6 +220,17 @@ PortalClient.prototype = (function()
 		
 		Object_GetByObjectGUID:	function(callback, objectGUID, accessPointGUID, includeMetadata, includeFiles, includeObjectRelations, includeAccessPoints)
 		{ this.Object_Get(callback, "(GUID:" + objectGUID + ")", null, accessPointGUID, 0, 1, includeMetadata, includeFiles, includeObjectRelations, includeAccessPoints); },
+
+		Object_GetBySearch:	function(callback, searchString, schemas, langCode, sort, accessPointGUID, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations, includeAccessPoints)
+		{
+			var schemaStrings = [];
+			for (i in schemas) {
+				schemaStrings[i] = "m" + schemas[i] + "_" + langCode + "_all" + ":" + "(" + searchString + ")";
+			}
+			var query = schemaStrings.join(" ");
+
+			this.Object_Get(callback, query, sort, accessPointGUID, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations, includeAccessPoints);
+		},
 		
 		Object_SetPublishSettings: function(callback, objectGUID, accessPointGUID, startDate, endDate)
 		{ CallService.call(this, callback, "Object/SetPublishSettings", HTTP_METHOD_GET, {objectGUID: objectGUID, accessPointGUID: accessPointGUID, startDate: startDate, endDate: endDate}, true); },
