@@ -1,0 +1,1 @@
+../src/CHAOS.Portal.Client.PortalClient.js
