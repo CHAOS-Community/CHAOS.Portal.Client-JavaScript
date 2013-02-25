@@ -49,8 +49,18 @@ div.try-code {
   text-align: right;
 }
 
+#file-table img {
+  width: 10em;
+}
+
 p code {
   background-color: #E3E3E3;
+}
+code.line {
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+  background-color: #E3E3E3;
+  display: block;
 }
 
 aside.note p:before {
@@ -77,25 +87,13 @@ a.next-page {
   /* text-align: right; */
 }
 
-/* SyntaxHighlighter specific CSS BEGIN */
-div.syntaxhighlighter {
-  margin: 0 0 !important;
+/* Auto-fit CodeMirror to contents: http://codemirror.net/demo/resize.html */
+.CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
+}
+.CodeMirror-scroll {
+  overflow-y: hidden;
+  overflow-x: auto;
 }
 
-/* div.syntaxhighlighter table tr td div.line { */
-/*   font-family: 'Source Sans Pro', monospace, sans-serif !important; */
-/* } */
-
-/* div.syntaxhighlighter table tr td div.line.alt1, */
-/* div.syntaxhighlighter table tr td div.line.alt2 { */
-div.syntaxhighlighter div.line.alt1,
-div.syntaxhighlighter div.line.alt2 {
-  /* font-family: Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif; */
-  /* font-size: 9pt; */
-  background-color: #F3F3F3 !important;
-}
-
-div.syntaxhighlighter td.gutter div.line {
-  background-color: lightgray !important;
-}
-/* SyntaxHighlighter specific CSS END */

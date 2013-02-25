@@ -4,86 +4,18 @@
     <meta charset="UTF-8">
     <title>CHAOS tutorials: Introduction to the CHAOS.Portal Javascript client</title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-    <script src="../CHAOS.Portal.Client-JavaScript/src/CHAOS.Portal.Client.PortalClient.js" type="text/javascript"></script>
+    <script src="CHAOS.Portal.Client.PortalClient.js" type="text/javascript"></script>
 
-    <!-- <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/syntaxhighlighter/3.0.83/styles/shThemeRDark.css"> -->
-    <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/syntaxhighlighter/3.0.83/styles/shThemeEclipse.css">
+    <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/codemirror/3.0/codemirror.css">
+    <script type="text/javascript" src="http://cdn.jsdelivr.net/codemirror/3.0/codemirror.js"></script>
+    <script type="text/javascript" src="http://cdn.jsdelivr.net/codemirror/3.0/mode/javascript/javascript.js"></script>
+    <script type="text/javascript" src="http://cdn.jsdelivr.net/codemirror/3.0/mode/css/css.js"></script>
+    <script type="text/javascript" src="http://cdn.jsdelivr.net/codemirror/3.0/mode/xml/xml.js"></script>
+    <!-- htmlmixed depends on xml and css -->
+    <script type="text/javascript" src="http://cdn.jsdelivr.net/codemirror/3.0/mode/htmlmixed/htmlmixed.js"></script>
+
     <link href="style.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/syntaxhighlighter/3.0.83/styles/shCore.css">
-    <script type="text/javascript" src="http://cdn.jsdelivr.net/syntaxhighlighter/3.0.83/scripts/shCore.js"></script>
-    <script type="text/javascript" src="http://cdn.jsdelivr.net/syntaxhighlighter/3.0.83/scripts/shBrushJScript.js"></script>
-    <script type="text/javascript"
-      src="http://cdn.jsdelivr.net/syntaxhighlighter/3.0.83/scripts/shBrushXml.js"></script>
-    <script>
-
-      $(document).ready(function(event) {
-
-        // Calculate line numbers
-        var setup_code = "";
-        var line_count = 0;
-        $('aside.code pre code#setup.language-javascript').each(function() {
-          line_count = $(this).text().split("\n").length + 1
-          setup_code = $(this).text();
-        });
-
-        // $('aside.code pre code[id!="setup"].language-javascript').each(function() {
-        $('aside.code pre code.language-javascript').each(function() {
-          var pre = $(this).parent();
-
-          if ($(this).attr("id") != "setup") {
-            pre.addClass('first-line: ' + line_count);
-
-            // Add Javascript evaluate button
-            var codeButton = $('<div class="try-code"><button>Try!<\/button><\/div>');
-            codeButton.children('button').click(codeEval);
-            pre.after(codeButton);
-
-            // Save code in <code>-tag -- Google Prettify removes line-breaks
-            // and so breaks the code.
-            var code = setup_code + $(this).text();
-            console.log(code);
-            pre.parent().data('code', code);
-          }
-
-
-          // Remove code element - otherwise SyntaxHighlighter doesn't work
-          var html = $(this).html();
-          pre.html(html);
-
-          pre.addClass('brush: js');
-          pre.addClass('toolbar: false');
-        });
-
-        $('aside.code pre code.language-html').each(function() {
-          var pre = $(this).parent();
-          var html = $(this).html();
-          pre.html(html);
-
-          pre.addClass('brush: html');
-          pre.addClass('toolbar: false');
-        });
-
-        SyntaxHighlighter.all();
-
-      });
-
-      function codeEval(event) {
-        // console.log('Pressed!');
-
-        var aside = $(this).parent().parent();
-        console.log(aside.prop('tagName'));
-
-        // Old code (before Prettify)
-        // var code = aside.prevAll('aside').find('pre code').text();
-        // code += aside.find('pre code').text();
-
-        var code = aside.data('code');
-        console.log(code);
-        eval(code);
-
-        // console.log('Unpressed!');
-      }
-    </script>
+    <script type="text/javascript" src="script.js"></script>
   </head>
   <body>
     <!-- Representation of code in HTML is for some reason weird but it seems consensus is
@@ -108,6 +40,12 @@
         This tutorial will teach you how to set up the client, connect to a
         CHAOS.Portal and retrieve object from the CHAOS database.
       </p>
+      <aside class="note">
+        <p>
+          Double-click on any code to select it -- this makes for easy copying
+          and pasting.
+        </p>
+      </aside>
 
       <section>
       <h3>Setting up</h3>
@@ -125,6 +63,8 @@
           included in your page between
           <code>&lt;script&gt;&lt;/script&gt;</code> tags or otherwise imported
           as Javascript into your site.
+
+          Double-click on any code to select it: for easy Copy/Paste.
         </p>
       </aside>
 
@@ -136,7 +76,7 @@
       <pre><code id="setup" class="language-javascript">// Setup settings
 var ChaosSettings = {
   "servicePath":"http://api.chaos-systems.com/",
-  "clientGUID":"9f62060c-64ff-e14f-a8d5-d85a1e2e21b8",
+  //"clientGUID":"9f62060c-64ff-e14f-a8d5-d85a1e2e21b8",
   "accessPointGUID":"C4C2B8DA-A980-11E1-814B-02CEA2621172",
 };
 // Instantiate client
@@ -168,7 +108,7 @@ var client = new PortalClient(
       </p>
 
       <aside class="code">
-      <pre><code class="language-javascript">client.SessionAcquired().Add(function(sender, sessionGUID) {
+      <pre><code class="language-javascript eval">client.SessionAcquired().Add(function(sender, sessionGUID) {
   alert("Session created: " + sessionGUID);
 });</code></pre>
 <!--       <pre><code class="language&#45;javascript">setTimeout(function() { -->
@@ -189,7 +129,7 @@ var client = new PortalClient(
       </p>
 
       <aside class="code">
-      <pre><code class="language-javascript">// Add search schemas
+      <pre><code class="language-javascript eval">// Add search schemas
 ChaosSettings.schemas = [
   "5906a41b-feae-48db-bfb7-714b3e105396",
   "00000000-0000-0000-0000-000063c30000",
@@ -217,7 +157,6 @@ function showObjects(serviceResult) {
   var count = serviceResult.MCM().Count();
   var totalcount = serviceResult.MCM().TotalCount();
   alert("Got " + count + "/" + totalcount + " objects");
-  console.log(serviceResult.MCM().Results());
 }</code></pre>
       </aside>
 
@@ -227,31 +166,25 @@ function showObjects(serviceResult) {
         The <code>serviceResult</code> has a number of fields, of which
         <code>MCM()</code> is the most important and the one we are going to be
         using.
-
       </p>
 
       <p>
-        Let's add some error handling code to that call.
+        Now the resulting objects are quite big, so let's only grab one, by
+        setting pageSize to 1:
       </p>
 
       <aside class="code">
-      <pre><code class="language-javascript">// Add search schemas
-ChaosSettings.schemas = [
-  "5906a41b-feae-48db-bfb7-714b3e105396",
-  "00000000-0000-0000-0000-000063c30000",
-  "00000000-0000-0000-0000-000065c30000"
-];
-// Retrieve objects
+      <pre><code class="language-javascript eval">// Retrieve objects
 client.SessionAcquired().Add(function(sender, sessionGUID) {
   client.Object_GetBySearch(
     showObjects                     // callback
-    , "*"                         // query
-    , ChaosSettings.schemas         // schemas
+    , "mut"                         // query
+    , "5906a41b-feae-48db-bfb7-714b3e105396" // schemas
     , "da"                          // langCode
     , null                          // sort
     , ChaosSettings.accessPointGUID // accessPointGuid
     , 0                             // pageIndex
-    , 3                             // pageSize
+    , 1                             // pageSize
     , true                          // includeMetadata
     , true                          // includeFiles
     , true                          // includeObjectRelations
@@ -260,30 +193,69 @@ client.SessionAcquired().Add(function(sender, sessionGUID) {
 });
 
 function showObjects(serviceResult) {
-  if (serviceResult.WasSuccess() &amp;&amp; serviceResult.MCM().WasSuccess()) {
-    var count = serviceResult.MCM().Count();
-    var totalcount = serviceResult.MCM().TotalCount();
-    alert("Got " + count + "/" + totalcount + " objects");
-    console.log(serviceResult.MCM().Results());
-  } else {
-    if (!serviceResult.WasSuccess()) {
-      alert("Portal error: " + serviceResult.Error());
-      console.log(serviceResult.Error());
-    } else if (!serviceResult.MCM().WasSuccess()) {
-      alert("MCM error: " + serviceResult.MCM().Error());
-      console.log(serviceResult.MCM().Error());
-    }
-  }
+  var json_result = serviceResult.MCM().Results();
+
+  // The code below is simply for showing you the JSON results
+  var string_result = JSON.stringify(json_result, null, '\t').replace('&lt;', '&amp;lt;').replace('&gt;', '&amp;gt;')
+  $('#search-results').data('codeMirror').setValue(string_result);
 }</code></pre>
       </aside>
 
-      </section>
+      <p>And the results are...:</p>
+      <aside class="code" id="search-results">
+      <pre><code class="language-json">
+// The result should look something like this
+[
+	{
+		"GUID": "00000000-0000-0000-0000-00004e040016",
+		"ObjectTypeID": 36,
+		"DateCreated": -2147483648,
+		"Metadatas": [
+			{
+				"GUID": "29d669cf-c3e5-4749-beb9-20bb7ac18b05",
+				"EditingUserGUID": "80d15fb4-c1fb-9445-89c6-1a398cbd85e5",
+				"LanguageCode": "da",
+				"MetadataSchemaGUID": "5906a41b-feae-48db-bfb7-714b3e105396",
+				"RevisionID": 1,
+        "MetadataXML": "&lt;some&gt;&lt;xml&gt;&lt;data&gt;&lt;/data&gt;&lt;/xml&gt;&lt;/some&gt;",
+				"DateCreated": -2147483648,
+				"FullName": "CHAOS.MCM.Data.DTO.Metadata"
+      }
+      //, ... more metadata
+		],
+		"Files": [
+			{
+				"ID": 506457,
+				"ParentID": null,
+				"Filename": "db_fo_sa_00564.jpg",
+				"OriginalFilename": "db_fo_sa_00564.jpg",
+				"Token": "HTTP Download",
+				"URL": "http://example.org/some/url/to/a/file.jpg",
+				"FormatID": 42,
+				"Format": "KB Source JPEG ",
+				"FormatCategory": "Image Source",
+				"FormatType": "Image",
+				"FullName": "CHAOS.MCM.Data.DTO.FileInfo"
+			}
+      //, ... more files
+		],
+		"ObjectRelations": [],
+		"FullName": "CHAOS.MCM.Data.DTO.Object"
+	}
+]
+      </code></pre>
+      </aside>
+      <p> What you can see here is that we get a list of objects. Each object
+      has a GUID and an ObjectTypeID. Furthermore we can see that each object
+      has a list of files and a list of metadata.</p>
+    </section>
 
       <footer>
+        <p>The next section will teach you how to use files and metadata.</p>
         <a class="prev-page" href="index.html">&larr; Back up: Overview
           </a>
-        <a class="next-page" href="javascript_login.html">Next up: Logging in
-          &rarr;</a>
+        <a class="next-page" href="metadata.html">Next up: Using metadata and
+          files &rarr;</a>
         <!-- &raquo; / &laquo; -->
       </footer>
     </div>
