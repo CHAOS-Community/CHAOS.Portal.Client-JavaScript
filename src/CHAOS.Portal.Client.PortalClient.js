@@ -223,6 +223,7 @@ PortalClient.prototype = (function()
 
 		Object_GetBySearch:	function(callback, searchString, schemas, langCode, sort, accessPointGUID, pageIndex, pageSize, includeMetadata, includeFiles, includeObjectRelations, includeAccessPoints)
 		{
+      if (typeof schemas === 'string') { schemas = [schemas]; }
 			var schemaStrings = [];
 			for (i in schemas) {
 				schemaStrings[i] = "m" + schemas[i] + "_" + langCode + "_all" + ":" + "(" + searchString + ")";
