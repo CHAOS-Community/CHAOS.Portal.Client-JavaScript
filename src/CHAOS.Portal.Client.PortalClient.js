@@ -309,6 +309,8 @@ PortalEvent.prototype =
 function PortalServiceResult(data)
 {
 	var _error = null;
+	var _exception = null;
+	var _stacktrace = null;
 	var _portal = null;
 	var _emailPassword = null;
 	var _secureCookie = null;
@@ -326,7 +328,9 @@ function PortalServiceResult(data)
 	}
 	else if(data.ModuleResults.length == 1 && data.ModuleResults[0].Fullname.indexOf("Exception") != -1)
 	{
-		_error = data.ModuleResults[0].Message;
+		_error = data.Results[0].Message;
+		_exception = data.Results[0].Fullname;
+		_stacktrace = data.Results[0].Stacktrace;
 	}
 	
 	if(_error == null)
@@ -373,10 +377,14 @@ function PortalModuleResult(data)
 {
 	var _results = null;
 	var _error = null;
+	var _exception = null;
+	var _stacktrace = null;
 
 	if(data.Results.length == 1 && typeof data.Results[0].Fullname != "undefined" && data.Results[0].Fullname.indexOf("Exception") != -1)
 	{
 		_error = data.Results[0].Message;
+		_exception = data.Results[0].Fullname;
+		_stacktrace = data.Results[0].Stacktrace;
 	}
 	else
 	{
@@ -384,6 +392,8 @@ function PortalModuleResult(data)
 	}
 
 	this.Error = function() { return _error; };
+	this.Exception = function() { return _exception; };
+	this.Stacktrace = function() { return _stacktrace; };
 	this.WasSuccess = function() { return this.Error() == null; };
 	this.Results = function() { return _results; };
 	this.TotalCount = function() { return data.TotalCount; }
