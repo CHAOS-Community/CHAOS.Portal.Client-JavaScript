@@ -14,76 +14,6 @@
     <script type="text/javascript" src="http://cdn.jsdelivr.net/syntaxhighlighter/3.0.83/scripts/shBrushJScript.js"></script>
     <script type="text/javascript"
       src="http://cdn.jsdelivr.net/syntaxhighlighter/3.0.83/scripts/shBrushXml.js"></script>
-    <script>
-
-      $(document).ready(function(event) {
-
-        // Calculate line numbers
-        var setup_code = "";
-        var line_count = 0;
-        $('aside.code pre code#setup.language-javascript').each(function() {
-          line_count = $(this).text().split("\n").length + 1
-          setup_code = $(this).text();
-        });
-
-        // $('aside.code pre code[id!="setup"].language-javascript').each(function() {
-        $('aside.code pre code.language-javascript').each(function() {
-          var pre = $(this).parent();
-
-          if ($(this).attr("id") != "setup") {
-            pre.addClass('first-line: ' + line_count);
-
-            // Add Javascript evaluate button
-            var codeButton = $('<div class="try-code"><button>Try!<\/button><\/div>');
-            codeButton.children('button').click(codeEval);
-            pre.after(codeButton);
-
-            // Save code in <code>-tag -- Google Prettify removes line-breaks
-            // and so breaks the code.
-            var code = setup_code + $(this).text();
-            console.log(code);
-            pre.parent().data('code', code);
-          }
-
-
-          // Remove code element - otherwise SyntaxHighlighter doesn't work
-          var html = $(this).html();
-          pre.html(html);
-
-          pre.addClass('brush: js');
-          pre.addClass('toolbar: false');
-        });
-
-        $('aside.code pre code.language-html').each(function() {
-          var pre = $(this).parent();
-          var html = $(this).html();
-          pre.html(html);
-
-          pre.addClass('brush: html');
-          pre.addClass('toolbar: false');
-        });
-
-        SyntaxHighlighter.all();
-
-      });
-
-      function codeEval(event) {
-        // console.log('Pressed!');
-
-        var aside = $(this).parent().parent();
-        console.log(aside.prop('tagName'));
-
-        // Old code (before Prettify)
-        // var code = aside.prevAll('aside').find('pre code').text();
-        // code += aside.find('pre code').text();
-
-        var code = aside.data('code');
-        console.log(code);
-        eval(code);
-
-        // console.log('Unpressed!');
-      }
-    </script>
   </head>
   <body>
     <!-- Representation of code in HTML is for some reason weird but it seems consensus is
@@ -94,22 +24,31 @@
     <div id="body-column">
       <h1>Tutorial: CHAOS.Portal Javascript Client</h1>
       <h2>The first steps</h2>
-      <p id="intro">
-        The <dfn>CHAOS.Portal Javascript Client</dfn> is a communication client for
-        <dfn>CHAOS.Portal</dfn><br>
-        <dfn>CHAOS.Portal</dfn> is the web API for <a
+
+      <!-- http://html5doctor.com/the-dl-element/ -->
+      <dl id="intro">
+        <dt><dfn>CHAOS.Portal Javascript Client</dfn></dt>
+        <dd>is a Javascript API for <dfn>CHAOS.Portal</dfn></dd>
+        <dt><dfn>CHAOS.Portal</dfn></dt>
+        <dd>is the web API for <a
           href="http://chaos-community.org"><dfn><abbr title="Cultural Heritage
-            Archiving Open System">CHAOS</abbr></dfn></a>.<br>
-      </p>
+              Archiving Open System">CHAOS</abbr></dfn></a>.</dd>
+      </dl>
       <p>
-        Javascript client for CHAOS.Portal is one of the easiest ways to start
+        The CHAOS.Portal Javascript Client is one of the easiest ways to start
         using CHAOS.<br>
+        Below you will find a series of tutorials that will teach you how to use it.
       </p>
       <h3>Tutorials</h3>
       <ol>
         <li><a href="intro.html">The Basics</a></li>
         <li><a href="metadata.html">Metadata and schemas</a></li>
         <li><a href="errors.html">Error handling</a></li>
+      </ol>
+
+      <h3>Examples</h3>
+      <ol>
+        <li>Coming soon!</li>
       </ol>
 
 

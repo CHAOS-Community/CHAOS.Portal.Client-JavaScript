@@ -24,21 +24,29 @@
     -->
 
     <div id="body-column">
+      <div id="index">
+        <a href="index.html">Overview</a>
+        <ol>
+          <li><a href="intro.html">The Basics</a></li>
+          <li class="current">Metadata and files</li>
+          <li><a href="errors.html">Error handling</a></li>
+        </ol>
+      </div>
+
       <h1>Tutorial: CHAOS.Portal Javascript Client</h1>
       <h2>Using metadata and files</h2>
-      <p id="intro">
-        The <dfn>CHAOS.Portal Javascript Client</dfn> is a communication client for
-        <dfn>CHAOS.Portal</dfn><br>
-        <dfn>CHAOS.Portal</dfn> is the web API for <a
-          href="http://chaos-community.org"><dfn><abbr title="Cultural Heritage
-            Archiving Open System">CHAOS</abbr></dfn></a>.<br>
-      </p>
-      <p>In this tutorial we will look at the files and metadata associated
-      with objects.</p>
+      <div class="intro">
+      This tutorial will teach you how to:
+      <ul>
+        <li>retrieve single objects (by GUID)</li>
+        <li>use files attached to objects</li>
+        <li>use object metadata</li>
+      </ul>
+      </div>
       <aside class="note">
         <p>
           Every piece of code is inside a text editor and can be edited.
-          Code pieces that make sense to evaluate can be run using "Try"
+          Code pieces that make sense to evaluate can be run using the "Try"
           button.
         </p>
       </aside>
@@ -69,6 +77,8 @@ function showObject(serviceResult) {
       </aside>
 
       </section>
+
+      <section>
       <h3>Files</h3>
       <p>
       Files belonging to an object can be of different types -- video, audio,
@@ -131,7 +141,122 @@ function showObject(serviceResult) {
           </tr>
         </tbody>
       </table>
+      </section>
 
+      <section>
+      <h3>Metadata</h3>
+      <p>
+      Okay, so we have an object and maybe some files related to it. But...<br>
+      What's the name of the object? What color does it have? What length?
+      Texture? Taste? -- and what noise does it make when it's out of paper?<br>
+      These are questions for the metadata.<br>
+      <!-- This is all in the metadata -->
+      <!--What I'm saying here is that your-->
+      The CHAOS database can be filled all kinds of objects. What kind of
+      objects should be known to you when you start working with your CHAOS
+      database or it should be documented in some place known to you.<br>
+      <span class="important">The metadata of an object is a list of XML
+        documents with related XML schemas</span>. Again I recommend that you
+      know the structure of these document before you begin, if you want
+      anything meaningful out them.<br>
+      <!--Now just to be clear metadata is <emph>just</emph> metadata. What is
+      contained in that metadata is basically up to the people who the object in
+      to the database and it could be anything - as a general rule the structure
+      and content of such metadata should be known to you already or documented
+      someplace you know.-->
+      Let's have a look:
+      </p>
+
+      <aside class="code">
+      <pre><code class="language-javascript eval">// Retrieve object
+client.SessionAcquired().Add(function(sender, sessionGUID) {
+  client.Object_GetByObjectGUID(
+    showObject                      // callback
+    , "00000000-0000-0000-0000-00004e040016" // objectGUID
+    , ChaosSettings.accessPointGUID // accessPointGuid
+    , true                          // includeMetadata
+    , true                          // includeFiles
+    , true                          // includeObjectRelations
+    , false                         // includeAccessPoints
+  );
+});
+
+function showObject(serviceResult) {
+  var obj = serviceResult.MCM().Results()[0];
+  var metadata = obj.Metadatas;
+
+  var string_result = JSON.stringify(metadata, null, '\t').replace('&lt;', '&amp;lt;').replace('&gt;', '&amp;gt;')
+  $('#metadata-results').data('codeMirror').setValue(string_result);
+}</code></pre>
+      </aside>
+
+      <p>Our object's metadata:</p>
+      <aside class="code" id="metadata-results">
+      <pre><code class="language-json">
+// The result should look something like this
+[
+	{
+		"GUID": "29d669cf-c3e5-4749-beb9-20bb7ac18b05",
+		"EditingUserGUID": "80d15fb4-c1fb-9445-89c6-1a398cbd85e5",
+		"LanguageCode": "da",
+		"MetadataSchemaGUID": "5906a41b-feae-48db-bfb7-714b3e105396",
+		"RevisionID": 1,
+		"MetadataXML": "&lt;DKA xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://www.danskkulturarv.dk/DKA2.xsd\" xmlns:oa=\"http://www.openarchives.org/OAI/2.0/\" xmlns:ese=\"http://www.europeana.eu/schemas/ese/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\" xsi:schemaLocation=\"http://www.danskkulturarv.dk/DKA2.xsd ../../Base/schemas/DKA2.xsd\"&gt;&lt;Title&gt;Uden titel&lt;/Title&gt;&lt;Abstract /&gt;&lt;Description&gt;&lt;div xmlns=\"http://www.w3.org/1999/xhtml\"&gt;&lt;p&gt;En mand i profil med sideskilning og et mut ansigtsudtryk&lt;/p&gt;&lt;p&gt;Tusch&lt;/p&gt;&lt;p&gt;&lt;strong&gt;&lt;a target=\"_blank\" href=\"http://www.kb.dk/images/billed/2010/okt/billeder/da/\"&gt;\r\n\t\t\tMere fra samme udgivelse&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;&lt;/div&gt;&lt;/Description&gt;&lt;Organization&gt;The Royal Library: The National Library of Denmark and Copenhagen University Library&lt;/Organization&gt;&lt;ExternalURL&gt;http://www.kb.dk/images/billed/2010/okt/billeder/object108593/en/&lt;/ExternalURL&gt;&lt;ExternalIdentifier&gt;oai:kb.dk:oai:kb.dk:images:billed:2010:okt:billeder:object108593&lt;/ExternalIdentifier&gt;&lt;Type&gt;IMAGE&lt;/Type&gt;&lt;Contributors /&gt;&lt;Creators&gt;&lt;Creator Role=\"creator\" Name=\"ukendt\" /&gt;&lt;/Creators&gt;&lt;TechnicalComment /&gt;&lt;Location /&gt;&lt;RightsDescription&gt;Copyright © The Royal Library: The National Library of Denmark and Copenhagen University Library&lt;/RightsDescription&gt;&lt;Categories /&gt;&lt;Tags /&gt;&lt;/DKA&gt;",
+		"DateCreated": -2147483648,
+		"FullName": "CHAOS.MCM.Data.DTO.Metadata"
+	},
+	{
+		"GUID": "cde9176a-d4c9-ad4f-b8f0-aaede63764d0",
+		"EditingUserGUID": "80d15fb4-c1fb-9445-89c6-1a398cbd85e5",
+		"LanguageCode": "da",
+		"MetadataSchemaGUID": "00000000-0000-0000-0000-000063c30000",
+		"RevisionID": 1,
+		"MetadataXML": "&lt;DKA&gt;&lt;Title&gt;Uden titel&lt;/Title&gt;&lt;Abstract&gt;En mand i profil med sideskilning og et mut ansigtsudtryk&lt;/Abstract&gt;&lt;Description /&gt;&lt;Organization&gt;Det Kongelige Bibliotek&lt;/Organization&gt;&lt;Type /&gt;&lt;CreatedDate&gt;2010-10-06T00:00:00&lt;/CreatedDate&gt;&lt;FirstPublishedDate&gt;2010-10-06T00:00:00&lt;/FirstPublishedDate&gt;&lt;Identifier&gt;108593&lt;/Identifier&gt;&lt;Contributor /&gt;&lt;Creator&gt;&lt;Person Name=\"ukendt\" Role=\"Creator\" /&gt;&lt;/Creator&gt;&lt;TechnicalComment /&gt;&lt;Location /&gt;&lt;RightsDescription&gt;Billedet er beskyttet af loven om ophavsret&lt;/RightsDescription&gt;&lt;Categories /&gt;&lt;/DKA&gt;",
+		"DateCreated": -2147483648,
+		"FullName": "CHAOS.MCM.Data.DTO.Metadata"
+	}
+]</code></pre>
+      </aside>
+
+      <p> Parsing XML with Javascript can be tricky business (<a
+        href="http://stackoverflow.com/a/8412989/118608" title="Answer on
+        StackOverflow explaining XML parsing in Javascript">answer on
+        StackOverflow</a>) so I recommend
+        using a library such as <a href="http://jquery.com" title="jQuery.com">jQuery</a>
+        to do it. In the following example we are using jQuery 1.7.1 to parse
+        and retrieve data from the XML.
+      </p>
+      <aside class="code">
+      <pre><code class="language-javascript eval">
+client.SessionAcquired().Add(function(sender, sessionGUID) {
+  client.Object_GetByObjectGUID(
+    showObject                      // callback
+    , "00000000-0000-0000-0000-00004e040016" // objectGUID
+    , ChaosSettings.accessPointGUID // accessPointGuid
+    , true                          // includeMetadata
+    , true                          // includeFiles
+    , true                          // includeObjectRelations
+    , false                         // includeAccessPoints
+  );
+});
+
+function showObject(serviceResult) {
+  var obj = serviceResult.MCM().Results()[0];
+  var metadata = obj.Metadatas;
+  var xml = metadata[1].MetadataXML;
+
+  var xmlDoc = $.parseXML( xml ); // XML document
+  var $xmlDoc = $( xmlDoc ); // jQuery XML document
+
+
+	var obj_title = $xmlDoc.find("Title").text();
+	var obj_desc = $xmlDoc.find("Abstract").text();
+
+  alert(obj_title + "\n" + obj_desc);
+}</code></pre>
+      </aside>
+
+      </section>
 
       <footer>
         <p>The next section will teach you about handling errors when dealing

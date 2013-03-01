@@ -24,26 +24,37 @@
     -->
 
     <div id="body-column">
+      <div id="index">
+        <a href="index.html">Overview</a>
+        <ol>
+          <li class="current">The Basics</li>
+          <li><a href="metadata.html">Metadata and files</a></li>
+          <li><a href="errors.html">Error handling</a></li>
+        </ol>
+      </div>
+
       <h1>Tutorial: CHAOS.Portal Javascript Client</h1>
       <h2>The first steps</h2>
-      <p id="intro">
-        The <dfn>CHAOS.Portal Javascript Client</dfn> is a communication client for
-        <dfn>CHAOS.Portal</dfn><br>
-        <dfn>CHAOS.Portal</dfn> is the web API for <a
-          href="http://chaos-community.org"><dfn><abbr title="Cultural Heritage
-            Archiving Open System">CHAOS</abbr></dfn></a>.<br>
-      </p>
-      <p>
-        Javascript client for CHAOS.Portal is one of the easiest ways to start
-        using CHAOS.<br>
-        <br>
-        This tutorial will teach you how to set up the client, connect to a
-        CHAOS.Portal and retrieve object from the CHAOS database.
-      </p>
+      <div class="intro">
+      This tutorial will teach you how to:
+      <ul>
+        <li>set up the client</li>
+        <li>connect to a CHAOS.Portal</li>
+        <li>search for objects in the CHAOS database</li>
+      </ul>
+      </div>
+      <!--<aside class="note">
+        <p>
+          All code can be edited in-place and most of it can be run using the
+          "Try" button.<br>
+          You can also copy and paste the code here to use on your own site as
+          you like. </p>
+      </aside>-->
       <aside class="note">
         <p>
-          Double-click on any code to select it -- this makes for easy copying
-          and pasting.
+          Every piece of code is inside a text editor and can be edited.
+          Code pieces that make sense to evaluate can be run using the "Try"
+          button.
         </p>
       </aside>
 
@@ -63,8 +74,6 @@
           included in your page between
           <code>&lt;script&gt;&lt;/script&gt;</code> tags or otherwise imported
           as Javascript into your site.
-
-          Double-click on any code to select it: for easy Copy/Paste.
         </p>
       </aside>
 
@@ -76,7 +85,7 @@
       <pre><code id="setup" class="language-javascript">// Setup settings
 var ChaosSettings = {
   "servicePath":"http://api.chaos-systems.com/",
-  //"clientGUID":"9f62060c-64ff-e14f-a8d5-d85a1e2e21b8",
+  "clientGUID":"9f62060c-64ff-e14f-a8d5-d85a1e2e21b8",
   "accessPointGUID":"C4C2B8DA-A980-11E1-814B-02CEA2621172",
 };
 // Instantiate client
@@ -86,10 +95,17 @@ var client = new PortalClient(
                  );</code></pre>
       </aside>
 
-      <p>
-        <code>servicePath</code> is the URL at which your CHAOS.Portal
-        is set up.
-      </p>
+      <!-- http://html5doctor.com/the-dl-element/ -->
+      <dl>
+        <dt><code>servicePath</code></dt>
+        <dd>is the URL at which your CHAOS.Portal is set up.</dd>
+        <dt><code>clientGUID</code></dt>
+        <dd> should be unique for each application, any GUID can be used.</dd>
+        <dt><code>accessPointGUID</code></dt>
+        <dd>is an ID that authenticates us to use the CHAOS.Portal. This
+        should be given to you by your friendly neighbourhood CHAOS.Portal
+        administrator.</dd>
+      </dl>
 
       <p> Instantiating the <code>PortalClient</code> this way automatically
       sets up a session. When the session has been set up we are ready to use
@@ -130,7 +146,7 @@ var client = new PortalClient(
 
       <aside class="code">
       <pre><code class="language-javascript eval">// Add search schemas
-ChaosSettings.schemas = [
+var fields = [
   "5906a41b-feae-48db-bfb7-714b3e105396",
   "00000000-0000-0000-0000-000063c30000",
   "00000000-0000-0000-0000-000065c30000"
@@ -140,7 +156,7 @@ client.SessionAcquired().Add(function(sender, sessionGUID) {
   client.Object_GetBySearch(
     showObjects                     // callback
     , "mut"                         // query
-    , ChaosSettings.schemas         // schemas
+    , fields                        // fields
     , "da"                          // langCode
     , null                          // sort
     , ChaosSettings.accessPointGUID // accessPointGuid
@@ -160,6 +176,24 @@ function showObjects(serviceResult) {
 }</code></pre>
       </aside>
 
+      <dl>
+        <dt><code>fields</code></dt>
+        <dd>are search fields to use in the Solr index. The long GUIDs refers to
+        metadata schemas. So what we're doing here is searching the object
+        metadata for the word 'mut'.</dd>
+        <dt><code>pageIndex</code></dt>
+        <dd>is the starting page of the search results, where the page size is
+        determined by <code>pageSize</code></dd>
+        <dt><code>pageSize</code></dt>
+        <dd>is the number of results you want retrieve</dd>
+        <dt><code>includeFiles</code></dt>
+        <dd>include files attached to objects in the results.</dd>
+        <dt><code>includeMetadata</code></dt>
+        <dd>include metadata attached to objects in the results.</dd>
+        <dt><code>includeObjectRelations</code></dt>
+        <dd>include object relations for an object in the results.</dd>
+      </dl>
+
       <p>
         When the search results has been recieved from the CHAOS.Portal, the
         callback is invoked with <code>serviceResult</code> as its argument.
@@ -167,6 +201,18 @@ function showObjects(serviceResult) {
         <code>MCM()</code> is the most important and the one we are going to be
         using.
       </p>
+
+      <dl>
+        <dt><code>serviceResult.MCM().TotalCount()</code></dt>
+        <dd>The number of objects that matched the query</dd>
+        <dt><code>serviceResult.MCM().Count()</code></dt>
+        <dd>The number of objects on this page: These are the objects available
+        to you in the serviceResult.<br>
+        If you want all the objects from a query at
+        once you will have to increase the <code>pageSize</code> or go through
+        all pages via <code>pageIndex</code>.</dd>
+      </dl>
+
 
       <p>
         Now the resulting objects are quite big, so let's only grab one, by
@@ -201,7 +247,7 @@ function showObjects(serviceResult) {
 }</code></pre>
       </aside>
 
-      <p>And the results are...:</p>
+      <p>Results:</p>
       <aside class="code" id="search-results">
       <pre><code class="language-json">
 // The result should look something like this
@@ -248,10 +294,19 @@ function showObjects(serviceResult) {
       <p> What you can see here is that we get a list of objects. Each object
       has a GUID and an ObjectTypeID. Furthermore we can see that each object
       has a list of files and a list of metadata.</p>
+
+      <p>Try turning off and on <code>includeFiles</code> and
+      <code>includeMetadata</code> and changing <code>pageSize</code> and
+      <code>pageIndex</code> in order to
+      familiarize yourself with the interface.</p>
+      <p>Unfortunately this object has no relations.</p>
+
+
+      <p>You are now ready to head on to the next section, which will teach you
+      how to use files and metadata.</p>
     </section>
 
       <footer>
-        <p>The next section will teach you how to use files and metadata.</p>
         <a class="prev-page" href="index.html">&larr; Back up: Overview
           </a>
         <a class="next-page" href="metadata.html">Next up: Using metadata and

@@ -15,6 +15,40 @@ div#body-column {
   display: inline-block;
   width: 600px;
   text-align: left;
+  position: relative;
+}
+
+div#index {
+  /* position: absolute; */
+  /* width: 145px; */
+  /* left: -155px; */
+  /* top: 200px; */
+  position: fixed;
+  width: 145px;
+  margin-left: -155px;
+  top: 125px;
+
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+
+  border-left: none;
+  border-right: none;
+}
+div#index ol {
+  padding-left: 2em;
+}
+div#index ol li.current {
+  list-style: none;
+  padding-left: 0em;
+  text-indent: -1em;
+}
+/* http://alistapart.com/article/taminglists/ */
+div#index ol li.current:before {
+  margin-left: -0.4em;
+  padding-right: 0.5em;
+  /* content: "\0BB \020"; */
+  content: "\25B6 "; /* 25B6 through 25BB right-pointing triangles */
 }
 
 h1 {
@@ -26,12 +60,24 @@ h2 {
   text-align: right;
 }
 
-p#intro {
+dl#intro {
+  background-color: #E0FFE0;
+  /* color: #555555; */
+  /* font-size: 1.2em; */
+
+  /* http://www.css3.info/preview/rounded-border/ */
+  border-radius: 8px;
+} 
+
+div.intro {
  background-color: #E0FFE0;
   /* border-bottom: 1px solid black; */
   /* border-top: 1px solid black; */
   color: #555555;
-  font-size: 1.2em;
+  font-size: 1.1em;
+  padding-top: 0.5em;
+  padding-left: 0.5em;
+  padding-bottom: 0.2em;
 }
 dfn {
   font-style: normal;
@@ -45,6 +91,10 @@ p br {
   line-height: 0.2em;
 }
 
+span.important {
+  background-color: #FDD;
+}
+
 div.try-code {
   text-align: right;
 }
@@ -53,7 +103,7 @@ div.try-code {
   width: 10em;
 }
 
-p code {
+p code, dl code {
   background-color: #E3E3E3;
 }
 code.line {
@@ -73,6 +123,14 @@ aside.note {
   padding-left: 10px;
   background-color: #FFE6E6;
   color: #666;
+}
+
+
+p.note {
+  margin-left:  20px;
+  padding-left: 10px;
+  background-color: #E6FFE6;
+  /* color: #666; */
 }
 
 
