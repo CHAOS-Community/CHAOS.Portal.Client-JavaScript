@@ -9,6 +9,10 @@ This is a JavaScript Portal API Client. It enables easy communication with a CHA
 ##Code
 The source code is located in the *src* folder.  
 
+##Tutorials
+Tutorials are included in the *tutorials* folder.
+They can also be found online on [this project's Github pages](http://chaos-community.github.com/CHAOS.Portal.Client-JavaScript/).
+
 ##Examples
 The examples are located in the *examples* folder.  
 Make sure to update the referenced script file paths if the examples are moved.
