@@ -125,6 +125,12 @@ PortalClient.prototype = (function()
 		                              HasSession:							function() { return this._SessionGUID != null; },
 		                              IsSessionAuthenticated: 			function() { return this._IsSessionAuthenticated; },
 
+                                  /**
+                                   * SetSessionGUID
+                                   *
+                                   * @param guid
+                                   * @param isAuthenticated
+                                   */
 		                              SetSessionGUID:	function(guid, isAuthenticated)
 		                              {
 			                                if(!guid)
@@ -137,6 +143,11 @@ PortalClient.prototype = (function()
 				                                  this.SessionAuthenticated().Raise(AUTHENTICATION_METHOD_EXTERNAL)
 		                              },
 
+                                  /**
+                                   * Session_Create
+                                   *
+                                   * @param callback
+                                   */
 		                              Session_Create:	function(callback)
 		                              {
 			                                ValidateCallback.call(this, callback);
@@ -155,6 +166,15 @@ PortalClient.prototype = (function()
 			                                                 }, "Session/Create", HTTP_METHOD_GET, { protocolVersion: this.ProtocolVersion() }, false);
 		                              },
 
+                                  /**
+                                   * EmailPassword_Login
+                                   *
+                                   * @param callback
+                                   * @param args {
+                                   * , email
+                                   * , password
+                                   * }
+                                   */
 		                              EmailPassword_Login:	function(callback, args)
 		                              {
 			                                ValidateCallback.call(this, callback);
@@ -176,6 +196,11 @@ PortalClient.prototype = (function()
 			                                                 }, "EmailPassword/Login", HTTP_METHOD_GET, args, true);
 		                              },
 
+                                  /**
+                                   * SecureCookie_Create
+                                   *
+                                   * @param callback
+                                   */
 		                              SecureCookie_Create:	function(callback)
 		                              {
                                       CallService.call(this, callback, "SecureCookie/Create", HTTP_METHOD_GET, null, true);
@@ -183,6 +208,15 @@ PortalClient.prototype = (function()
 
 		                              SecureCookie_Delete:	function(callback, guids) { throw "Method not implemented"; },
 
+                                  /**
+                                   * SecureCookie_Login
+                                   *
+                                   * @param callback
+                                   * @param args {
+                                   * , guid
+                                   * , passwordGUID
+                                   * }
+                                   */
 		                              SecureCookie_Login:	function(callback, args)
 		                              {
 			                                ValidateCallback.call(this, callback);
@@ -204,21 +238,65 @@ PortalClient.prototype = (function()
 			                                                 }, "SecureCookie/Login", HTTP_METHOD_GET, args, true);
 		                              },
 
+                                  /**
+                                   * Folder_Get
+                                   *
+                                   * @param callback
+                                   * @param args {
+                                   * , id
+                                   * , folderTypeID
+                                   * , parentID
+                                   * }
+                                   */
 		                              Folder_Get:	function(callback, args)
 		                              {
                                       CallService.call(this, callback, "Folder/Get", HTTP_METHOD_GET, args, true);
                                   },
 
-		                              MetadataSchema_Get:		function(callback, args)
+                                  /**
+                                   * MetadataSchema_Get
+                                   *
+                                   * @param callback
+                                   * @param args {
+                                   * , metadataSchemaGUID
+                                   * }
+                                   */
+		                              MetadataSchema_Get:	function(callback, args)
 		                              {
                                       CallService.call(this, callback, "MetadataSchema/Get", HTTP_METHOD_GET, args, true);
                                   },
 
+                                  /**
+                                   * Object_Create
+                                   *
+                                   * @param callback
+                                   * @param args {
+                                   * , guid
+                                   * , objectTypeID
+                                   * , folderID
+                                   * }
+                                   */
 		                              Object_Create:		function(callback, args)
 		                              {
                                       CallService.call(this, callback, "Object/Create", HTTP_METHOD_GET, args, true);
                                   },
 
+                                  /**
+                                   * Object_Get
+                                   *
+                                   * @param callback
+                                   * @param args {
+                                   * , query
+                                   * , sort
+                                   * , accessPointGUID
+                                   * , pageIndex
+                                   * , pageSize
+                                   * , includeMetadata
+                                   * , includeFiles
+                                   * , includeObjectRelations
+                                   * , includeAccessPoints
+                                   * }
+                                   */
 		                              Object_Get: function(callback, args)
 		                              {
 			                                args['includeMetadata'] = typeof args['includeMetadata'] !== 'undefined' ? args['includeMetadata'] : false;
@@ -229,18 +307,66 @@ PortalClient.prototype = (function()
 			                                CallService.call(this, callback, "Object/Get", HTTP_METHOD_GET, args, true);
 		                              },
 
+                                  /**
+                                   * Object_GetByFolderID
+                                   *
+                                   * @param callback
+                                   * @param args {
+                                   * , folderID
+                                   * , includeChildFolders
+                                   * , sort
+                                   * , accessPointGUID
+                                   * , pageIndex
+                                   * , pageSize
+                                   * , includeMetadata
+                                   * , includeFiles
+                                   * , includeObjectRelations
+                                   * , includeAccessPoints
+                                   * }
+                                   */
 		                              Object_GetByFolderID:	function(callback, args) // TODO: Test
 		                              {
                                       args['query'] = (args['includeChildFolders'] ? "(FolderTree: " : "(FolderID: ") + args['folderID'] + ")";
                                       this.Object_Get(callback, args);
                                   },
 
+                                  /**
+                                   * Object_GetByObjectGUID
+                                   *
+                                   * @param callback
+                                   * @param args {
+                                   * , objectGUID
+                                   * , accessPointGUID
+                                   * , includeMetadata
+                                   * , includeFiles
+                                   * , includeObjectRelations
+                                   * , includeAccessPoints
+                                   * }
+                                   */
 		                              Object_GetByObjectGUID:	function(callback, args)
 		                              {
                                       args['query'] = "(GUID:" + args.objectGUID + ")";
                                       this.Object_Get(callback, args);
                                   },
 
+                                  /**
+                                   * Object_GetBySearch
+                                   *
+                                   * @param callback
+                                   * @param args {
+                                   * , searchString
+                                   * , schemas
+                                   * , langCode
+                                   * , sort
+                                   * , accessPointGUID
+                                   * , pageIndex
+                                   * , pageSize
+                                   * , includeMetadata
+                                   * , includeFiles
+                                   * , includeObjectRelations
+                                   * , includeAccessPoints
+                                   * }
+                                   */
 		                              Object_GetBySearch:	function(callback, args)
 		                              {
                                       if (typeof args['schemas'] === 'string') { args['schemas'] = [args['schemas']]; }
@@ -253,21 +379,74 @@ PortalClient.prototype = (function()
 			                                this.Object_Get(callback, args);
 		                              },
 
+                                  /**
+                                   * Object_SetPublishSettings
+                                   *
+                                   * @param callback
+                                   * @param args {
+                                   * , objectGUID
+                                   * , accessPointGUID
+                                   * , startDate
+                                   * , endDate
+                                   * }
+                                   */
 		                              Object_SetPublishSettings: function(callback, args)
 		                              {
                                       CallService.call(this, callback, "Object/SetPublishSettings", HTTP_METHOD_GET, args, true);
                                   },
 
+                                  /**
+                                   * Metadata_Set
+                                   *
+                                   * @param callback
+                                   * @param args {
+                                   * , objectGUID
+                                   * , metadataSchemaGUID
+                                   * , langCode
+                                   * , revisionID
+                                   * , metadataXML
+                                   * }
+                                   */
 		                              Metadata_Set: function(callback, args)
                                   {
                                       CallService.call(this, callback, "Metadata/Set", HTTP_METHOD_GET, args, true);
                                   },
 
+                                  /**
+                                   * StatsObject_Set
+                                   *
+                                   * @param callback
+                                   * @param args {
+                                   * , repositoryIdentifier
+                                   * , objectIdentifier
+                                   * , objectTypeID
+                                   * , objectCollectionID
+                                   * , channelIdentifier
+                                   * , channelTypeID
+                                   * , eventTypeID
+                                   * , objectTitle
+                                   * , IP
+                                   * , city
+                                   * , country
+                                   * , userSessionID
+                                   * }
+                                   */
 		                              StatsObject_Set: function(callback, args)
                                   {
                                       CallService.call(this, callback, "StatsObject/Set", HTTP_METHOD_GET, args, true);
                                   },
 
+                                  /**
+                                   * Upload_Initiate
+                                   *
+                                   * @param callback
+                                   * @param args {
+                                   * , objectGUID
+                                   * , FormatTypeID
+                                   * , fileSize
+                                   * , supportMultipleChunks
+                                   * }
+                                   */
 		                              Upload_Initiate: function(callback, args)
 		                              {
 			                                args['supportMultipleChunks'] = typeof args['supportMultipleChunks'] !== 'undefined' ? args['supportMultipleChunks'] : false;
