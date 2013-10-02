@@ -1,4 +1,11 @@
-﻿if (!jQuery)
+﻿/**
+ * CHAOS.Portal.Client-Javascript
+ *
+ * @description Webclient for CHAOS' Portal webservice
+ * @repo https://github.com/CHAOS-Community/CHAOS.Portal.Client-JavaScript
+ */
+
+if (!jQuery)
     throw "jQuery not loaded";
 
 // ******************************** PortalClient ********************************
@@ -113,7 +120,8 @@ PortalClient.prototype = (function()
 			                                throw "Parameter callback must a function, null or undefined";
 	                            }
 
-	                            return {
+	                            return
+                              {
 		                              constructor: PortalClient,
 
 		                              ClientVersion:						function() { return CLIENT_VERSION; },
@@ -163,6 +171,7 @@ PortalClient.prototype = (function()
 
 				                                                   if(typeof callback === "function")
 					                                                     callback(serviceResult);
+
 			                                                 }, "Session/Create", HTTP_METHOD_GET, { protocolVersion: this.ProtocolVersion() }, false);
 		                              },
 
@@ -175,7 +184,7 @@ PortalClient.prototype = (function()
                                    * , password
                                    * }
                                    */
-		                              EmailPassword_Login:	function(callback, args)
+		                              EmailPassword_Login: function(callback, args)
 		                              {
 			                                ValidateCallback.call(this, callback);
 
@@ -193,6 +202,7 @@ PortalClient.prototype = (function()
 
 				                                                   if(typeof callback === "function")
 					                                                     callback(serviceResult);
+
 			                                                 }, "EmailPassword/Login", HTTP_METHOD_GET, args, true);
 		                              },
 
@@ -201,12 +211,12 @@ PortalClient.prototype = (function()
                                    *
                                    * @param callback
                                    */
-		                              SecureCookie_Create:	function(callback)
+		                              SecureCookie_Create: function(callback)
 		                              {
                                       CallService.call(this, callback, "SecureCookie/Create", HTTP_METHOD_GET, null, true);
                                   },
 
-		                              SecureCookie_Delete:	function(callback, guids) { throw "Method not implemented"; },
+		                              SecureCookie_Delete: function(callback, guids) { throw "Method not implemented"; },
 
                                   /**
                                    * SecureCookie_Login
@@ -235,6 +245,7 @@ PortalClient.prototype = (function()
 
 				                                                   if(typeof callback === "function")
 					                                                     callback(serviceResult);
+
 			                                                 }, "SecureCookie/Login", HTTP_METHOD_GET, args, true);
 		                              },
 
