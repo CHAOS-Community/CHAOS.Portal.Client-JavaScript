@@ -120,8 +120,7 @@ PortalClient.prototype = (function()
 			                                throw "Parameter callback must a function, null or undefined";
 	                            }
 
-	                            return
-                              {
+	                            return {
 		                              constructor: PortalClient,
 
 		                              ClientVersion:						function() { return CLIENT_VERSION; },
