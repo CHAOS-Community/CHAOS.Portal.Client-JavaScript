@@ -59,7 +59,7 @@ PortalClient.RegisterPlugin = function(initializerFunction) { this._pluginInitia
 
 PortalClient.prototype = (function()
                           {
-	                            var CLIENT_VERSION = "1.2.0";
+	                            var CLIENT_VERSION = "1.2.1";
 	                            var PROTOCOL_VERSION = 4;
 	                            var FORMAT = "jsonp";
 	                            var USER_HTTP_STATUS_CODES = false;
@@ -402,8 +402,39 @@ PortalClient.prototype = (function()
                                    */
 		                              Object_SetPublishSettings: function(callback, args)
 		                              {
-                                      CallService.call(this, callback, "Object/SetPublishSettings", HTTP_METHOD_GET, args, true);
-                                  },
+										  CallService.call(this, callback, "Object/SetPublishSettings", HTTP_METHOD_GET, args, true);
+									  },
+
+	                            	/**
+                                   * ObjectRelation_Create
+                                   *
+                                   * @param callback
+                                   * @param args {
+                                   * , object1GUID
+                                   * , object2GUID
+                                   * , objectRelationTypeID
+                                   * , sequence 
+                                   * }
+                                   */
+		                              ObjectRelation_Create: function (callback, args)
+									{
+		                              	CallService.call(this, callback, "ObjectRelation/Create", HTTP_METHOD_GET, args, true);
+		                              },
+		                              
+	                            	/**
+                                   * ObjectRelation_Delete
+                                   *
+                                   * @param callback
+                                   * @param args {
+                                   * , object1GUID
+                                   * , object2GUID
+                                   * , objectRelationTypeID
+                                   * }
+                                   */
+		                              ObjectRelation_Delete: function (callback, args)
+		                              {
+		                              	CallService.call(this, callback, "ObjectRelation/Delete", HTTP_METHOD_GET, args, true);
+		                              },
 
                                   /**
                                    * Metadata_Set
